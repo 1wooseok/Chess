@@ -1,7 +1,16 @@
-export default abstract class Piece {
-  private readonly icon: string;
+import Position from "../Position";
 
-  constructor() {
-    this.icon = "";
+export default abstract class Piece {
+  private _position: Position;
+
+  constructor(position: Position) {
+    this._position = position;
   }
+
+  public getPosition(): Position {
+    return this._position;
+  }
+
+  public abstract getMovablePositions(): Position[];
 }
+
