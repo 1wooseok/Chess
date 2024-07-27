@@ -1,5 +1,6 @@
 import Board from "./chess/Board.ts";
 import EColor from "./enum/EColor.ts";
+import Pawn from "./piece/Pawn.ts";
 import Rook from "./piece/Rook.ts";
 
 
@@ -36,12 +37,14 @@ function main(): void {
     console.assert(chessBoard.board[7][7]!.color == EColor.White, { first: chessBoard.board[7][7] });
 
     // Pawn
-    // console.assert(chessBoard.board[1].every(p => p instanceof Pawn), { blackPawnLine: chessBoard.board[1] });
-    // console.assert(chessBoard.board[6].every(p => p instanceof Pawn), { firstLine: chessBoard.board[6] });
+    console.assert(chessBoard.board[1].every(p => p instanceof Pawn), { blackPawnLine: chessBoard.board[1] });
+    console.assert(chessBoard.board[6].every(p => p instanceof Pawn), { firstLine: chessBoard.board[6] });
 
-    // console.assert(chessBoard.board[1].every(p => p!.color == EColor.Black), { blackPawnLine: chessBoard.board[1] });
-    // console.assert(chessBoard.board[6].every(p => p!.color == EColor.White), { firstLine: chessBoard.board[6] });
+    console.assert(chessBoard.board[1].every(p => p!.color == EColor.Black), { blackPawnLine: chessBoard.board[1] });
+    console.assert(chessBoard.board[6].every(p => p!.color == EColor.White), { firstLine: chessBoard.board[6] });
   }
+
+  console.log("END");
 }
 
 main();

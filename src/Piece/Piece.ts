@@ -43,6 +43,6 @@ export default abstract class Piece {
 
   // 비어 있는 칸이나 상대방의 기물이 차지하는 칸으로 이동할 수 있으며, 해당 칸의 상대방 기물은 포획되어 제거된다.
   // public abstract move(): void;
-  // public abstract getMovablePositions(): Position[];
+  public abstract getMovablePositions(board: (Piece | null)[][]): Position[];
 }
 

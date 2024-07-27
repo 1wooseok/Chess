@@ -3,7 +3,7 @@ enum EGameStatus {
   Checkmate,
   Stalemate,
   Draw,
-  Resign,
+  Surrender,
   FiftyMoveRule,
   // ThreefoldRepetition, // TODO: 반드시 필요한지
 }
