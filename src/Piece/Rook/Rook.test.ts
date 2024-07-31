@@ -1,7 +1,7 @@
 import {assert, expect, test} from "vitest";
-import Board from "../chess/Board";
-import Position from "../chess/Position";
-import Piece from "./Piece";
+import Board from "../../chess/board/Board";
+import Position from "../../chess/Position";
+import Piece from "../Piece";
 import Rook from "./Rook";
 
 test("Rook first move test", () => {

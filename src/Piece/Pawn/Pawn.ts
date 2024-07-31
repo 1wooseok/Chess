@@ -1,7 +1,7 @@
-import Board from "../chess/Board";
-import Position from "../chess/Position";
-import EColor from "../enum/EColor";
-import Piece from "./Piece";
+import Board from "../../chess/board/Board";
+import Position from "../../chess/Position";
+import EColor from "../../enum/EColor";
+import Piece from "../Piece";
 
 
 export default class Pawn extends Piece {

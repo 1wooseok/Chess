@@ -1,4 +1,4 @@
-import Board from "./chess/Board";
+import Board from "./chess/board/Board";
 import ChessManager from "./chess/ChessManager";
 
 function main(): void {

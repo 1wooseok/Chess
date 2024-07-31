@@ -1,6 +1,6 @@
 import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
-import Board from "./Board";
+import Board from "./board/Board";
 
 export default class ChessManager {
   private static instance: ChessManager | null = null;

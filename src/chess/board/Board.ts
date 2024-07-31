@@ -1,12 +1,12 @@
-import EColor from "../enum/EColor";
-import Bishop from "../piece/Bishop";
-import King from "../piece/King";
-import Knight from "../piece/Knight";
-import Pawn from "../piece/Pawn";
-import Piece from "../piece/Piece";
-import Queen from "../piece/Queen";
-import Rook from "../piece/Rook";
-import Position from "./Position";
+import EColor from "../../enum/EColor";
+import Bishop from "../../piece/bishop/Bishop";
+import King from "../../piece/king/King";
+import Knight from "../../piece/knight/Knight";
+import Piece from "../../piece/Piece";
+import Queen from "../../piece/queen/Queen";
+import Rook from "../../piece/rook/Rook";
+import Position from "../Position";
+import Pawn from "../../piece/pawn/Pawn";
 
 
 export default class Board {

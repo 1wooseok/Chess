@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest';
 import Board from "./Board";
-import Position from "./Position";
-import Rook from "../piece/Rook";
-import EColor from "../enum/EColor";
-import Pawn from "../piece/Pawn";
+import Position from "../Position";
+import Rook from "../../piece/Rook/Rook";
+import EColor from "../../enum/EColor";
+import Pawn from "../../piece/Pawn/Pawn";
 
 test("print", () => {
     const board = new Board();
