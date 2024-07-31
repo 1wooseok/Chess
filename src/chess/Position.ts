@@ -22,4 +22,8 @@ export default class Position {
   public set y(value: number) {
     this._y = value;
   }
+
+  public isSame(other: Position): boolean {
+    return this._x === other.x && this._y === other.y;
+  }
 }

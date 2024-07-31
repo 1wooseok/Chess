@@ -1,31 +1,42 @@
-import EColor from "../enum/EColor.ts";
-import EGameStatus from "../enum/EGameStatus.ts";
-import Board from "./Board.ts";
-
+import EColor from "../enum/EColor";
+import EGameStatus from "../enum/EGameStatus";
+import Board from "./Board";
 
 export default class ChessManager {
   private static instance: ChessManager | null = null;
-  
+
   private _board: Board;
   private _status: EGameStatus;
-  private _turnCount: number;
+  private _moveCount: number;
   
-  private constructor() {
-    this._board = new Board();
+  private constructor(board: Board) {
     this._status = EGameStatus.None;
-    this._turnCount = 1;
+    this._moveCount = 1;
+    this._board = board;
+  }
+
+  public static createInstance(board: Board): void {
+    console.assert(ChessManager.instance === null);
+
+    ChessManager.instance = new ChessManager(board);
   }
 
   public static getInstance(): ChessManager {
-    if (this.instance == null) {
-      this.instance = new ChessManager();
+    if (ChessManager.instance === null) {
+      throw "No instance was created before get()";
     }
 
-    return this.instance;
+    return ChessManager.instance;
+  }
+
+  public static deleteInstance(): void {
+    console.assert(ChessManager.instance !== null);
+
+    ChessManager.instance = null;
   }
   
   public get currentPlayer(): EColor {
-    return (this._turnCount & 1) == 1 ? EColor.White : EColor.Black;
+    return (this._moveCount & 1) == 1 ? EColor.White : EColor.Black;
   }
   
   public get status(): EGameStatus {
@@ -36,17 +47,23 @@ export default class ChessManager {
     this._status = value;
   }
   
-  public get turnCount(): number {
-    return this._turnCount;
+  public get moveCount(): number {
+    return this._moveCount;
   }
 
   public checkGameStatus(): void {
     // 현재 player기준으로 board 전체를 훑어서 king이 패배조건에 부합하는지 확인 필요
+
+    ++this._moveCount;
   }
 
+
+  public update(): void {
+    console.error(this._board);
+  }
   // event 기반으로 작동함 + event를 처리하는 처리기 필요
   // 현재 차례에 맞는 말들에만 event를 부여해야 함. + event 달려있는 애들 하이라이트.
-  // 말을 click or drag 하면, 
+  // 말을 drag 하면, 
 
   // 이벤트: click, drag 지원
   // 1. 이벤트 객체를 매개변수로 받음. 
