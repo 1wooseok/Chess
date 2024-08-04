@@ -29,7 +29,7 @@ export default class Board {
     onMoveStart(position: Position): void {
         console.log("[EVENT]: Drag start");
         const piece = this.getPieceOrNull(position);
-        if (piece == null) {
+        if (piece === null) {
             return;
         }
 
@@ -40,7 +40,7 @@ export default class Board {
     }
 
     onMoveEnd(position: Position): void {
-        if (this._selectedPiece == null) {
+        if (this._selectedPiece === null) {
             return;
         }
 
@@ -77,15 +77,15 @@ export default class Board {
                 switch (i) {
                     case 0:
                     case 7:
-                        if (j == 0 || j == 7) {
+                        if (j === 0 || j === 7) {
                             this._grid[i][j] = new Rook(position, color);
-                        } else if (j == 1 || j == 6) {
+                        } else if (j === 1 || j === 6) {
                             this._grid[i][j] = new Knight(position, color);
-                        } else if (j == 2 || j == 5) {
+                        } else if (j === 2 || j === 5) {
                             this._grid[i][j] = new Bishop(position, color);
-                        } else if (j == 3) {
+                        } else if (j === 3) {
                             this._grid[i][j] = new King(position, color);
-                        } else if (j == 4) {
+                        } else if (j === 4) {
                             this._grid[i][j] = new Queen(position, color);
                         }
                         break;
@@ -108,7 +108,7 @@ export default class Board {
                 stringBuilder.push('|');
 
                 const p = this.getPieceOrNull(new Position(x, y));
-                stringBuilder.push(p == null ? ' ' : p.symbol);
+                stringBuilder.push(p === null ? ' ' : p.symbol);
             }
             stringBuilder.push('|');
             stringBuilder.push('\n');

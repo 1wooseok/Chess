@@ -20,11 +20,11 @@ export default class Pawn extends Piece {
         const dy = super.color === EColor.White ? -1 : 1;
 
         const forward = new Position(x, y + dy);
-        if (board.isValidPosition(forward) && board.getPieceOrNull(forward) == null) {
+        if (board.isValidPosition(forward) && board.getPieceOrNull(forward) === null) {
             movablePositions.push(forward);
 
             const doubleForward = new Position(x, y + 2 * dy);
-            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceOrNull(doubleForward) == null) {
+            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceOrNull(doubleForward) === null) {
                 movablePositions.push(doubleForward);
             }
         }

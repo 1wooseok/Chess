@@ -4,7 +4,6 @@ import Board from "./board/Board";
 
 export default class ChessManager {
     private static instance: ChessManager | null = null;
-
     private _board: Board;
     private _status: EGameStatus;
     private _moveCount: number;
@@ -36,7 +35,7 @@ export default class ChessManager {
     }
 
     get currentPlayer(): EColor {
-        return (this._moveCount & 1) == 1 ? EColor.White : EColor.Black;
+        return (this._moveCount & 1) === 1 ? EColor.White : EColor.Black;
     }
 
     get status(): EGameStatus {

@@ -6,7 +6,6 @@ import EColor from "../enum/EColor";
 export default abstract class Piece {
     private readonly _COLOR: EColor;
     private readonly _SYMBOL: string;
-
     private _position: Position;
 
     protected constructor(position: Position, color: EColor, symbol: string) {
@@ -27,10 +26,10 @@ export default abstract class Piece {
         return this._SYMBOL;
     }
 
-    // 비어 있는 칸이나 상대방의 기물이 차지하는 칸으로 이동할 수 있으며, 해당 칸의 상대방 기물은 포획되어 제거된다.
+    abstract getMovablePositions(board: Board): Position[];
+
     move(board: Board, nextPosition: Position): boolean {
-        const moveablePositions = this.getMovablePositions(board);
-        if (!this.isMoveablePosition(moveablePositions, nextPosition)) {
+        if (!this.isMoveablePosition(board, nextPosition)) {
             // TODO: Error throw vs Boolean flag
             // 1. Error Throw : 사용자가 이상한 칸에 Drag & Drop 못하게, 이벤트 처리 함수에서 early exit 로직필요
             // 2. Boolean flag : 사용자가 이상한 칸에 Drag & Drop 하는것도 허용
@@ -47,12 +46,6 @@ export default abstract class Piece {
         // this._position.y = nextPosition.y;
 
         return true;
-    }
-
-    abstract getMovablePositions(board: Board): Position[];
-
-    private isMoveablePosition(moveablePositions: Position[], position: Position): boolean {
-        return Boolean(moveablePositions.find((p) => p.isSame(position)));
     }
 
     protected traverseDirection(board: Board, dx: number, dy: number): Position[] {
@@ -79,5 +72,9 @@ export default abstract class Piece {
         }
 
         return positions;
+    }
+
+    private isMoveablePosition(board: Board, position: Position): boolean {
+        return Boolean(this.getMovablePositions(board).find((p) => p.isSame(position)));
     }
 }

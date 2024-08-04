@@ -19,7 +19,7 @@ test("first move test", () =>
     expect(piece.color).toBe(EColor.Black);
 
     const moveablePositions = piece.getMovablePositions(board);
-    expect(moveablePositions.length == 0);
+    expect(moveablePositions.length === 0);
 
     const invalidPosition = new Position(x + 1, y + 2);
     expect(piece.move(board, invalidPosition)).toBe(false);
