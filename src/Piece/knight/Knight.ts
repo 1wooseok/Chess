@@ -4,12 +4,12 @@ import EColor from "../../enum/EColor";
 import Piece from "../Piece";
 
 export default class Knight extends Piece {
-  constructor(position: Position, color: EColor) {
-    super(position, color,  color === EColor.White ? "♘" : "♞");
-  }
+    constructor(position: Position, color: EColor) {
+        super(position, color, color === EColor.White ? "♘" : "♞");
+    }
 
-  public override getMovablePositions(board: Board): Position[] {
-    console.log(board);
-    return [];
-  }
+    override getMovablePositions(board: Board): Position[] {
+        console.log(board);
+        return [];
+    }
 }

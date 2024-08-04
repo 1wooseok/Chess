@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "tsx": "cls && tsx src/main.ts",
+    "tsx": "cls && tsx src/index.ts",
     "lint": "npx eslint src/**",
     "dev": "npm run lint --fix && vite",
     "build": "npm run lint --fix && tsc && vite build",

@@ -4,13 +4,13 @@ import EColor from "../../enum/EColor";
 import Piece from "../Piece";
 
 export default class Queen extends Piece {
-  constructor(position: Position, color: EColor) {
-    super(position, color,  color === EColor.White ? "♔" : "♚");
-  }
+    constructor(position: Position, color: EColor) {
+        super(position, color, color === EColor.White ? "♔" : "♚");
+    }
 
-  // TODO
-  public override getMovablePositions(board: Board): Position[] {
-    console.log(board);
-    return [];
-  }
+    // TODO
+    override getMovablePositions(board: Board): Position[] {
+        console.log(board);
+        return [];
+    }
 }
