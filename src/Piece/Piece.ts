@@ -74,6 +74,25 @@ export default abstract class Piece {
         return positions;
     }
 
+    protected filterInvalidPosition(board: Board, directions: Position[]): Position[] {
+        const positions: Position[] = [];
+
+        for (const d of directions) {
+            const x = this.position.x + d.x;
+            const y = this.position.y + d.y;
+            const p = new Position(x, y);
+
+            if (board.isValidPosition(p)) {
+                const other = board.getPieceOrNull(p);
+                if (other === null || other.color !== this.color) {
+                    positions.push(p);
+                }
+            }
+        }
+
+        return positions;
+    }
+
     private isMoveablePosition(board: Board, position: Position): boolean {
         return Boolean(this.getMovablePositions(board).find((p) => p.isSame(position)));
     }

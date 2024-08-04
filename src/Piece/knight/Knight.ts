@@ -9,32 +9,17 @@ export default class Knight extends Piece {
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const positions: Position[] = [];
-
         const directions = [
-            { dx: -1, dy: -2 },
-            { dx: -2, dy: -1, },
-            { dx: 1, dy: -2, },
-            { dx: 2, dy: -1, },
-            { dx: -1, dy: 2, },
-            { dx: -2, dy: 1, },
-            { dx: 1, dy: 2, },
-            { dx: 2, dy: 1, },
+            new Position(-1, -2),
+            new Position(-2, -1),
+            new Position(1, -2),
+            new Position(2, -1),
+            new Position(-1, 2),
+            new Position(-2, 1),
+            new Position(1, 2),
+            new Position(2, 1),
         ];
 
-        for (const d of directions) {
-            const x = super.position.x + d.dx;
-            const y = super.position.y + d.dy;
-            const p = new Position(x, y);
-
-            if (board.isValidPosition(p)) {
-                const other = board.getPieceOrNull(p);
-                if (other === null || other.color !== super.color) {
-                    positions.push(new Position(x, y));
-                }
-            }
-        }
-
-        return positions;
+        return super.filterInvalidPosition(board, directions);
     }
 }
