@@ -1,6 +1,6 @@
 import {assert, expect, test} from "vitest";
-import Board from "../../chess/board/Board";
-import Position from "../../chess/Position";
+import Board from "../../board/Board";
+import Position from "../../Position";
 import Piece from "../Piece";
 import Rook from "./Rook";
 
@@ -10,7 +10,7 @@ test("Rook first move test", () => {
     const x = 0;
     const y = 0;
     const initialPosition: Position = new Position(x, y);
-    const piece: Piece | null = board.getPieceOrNull(initialPosition);
+    const piece: Piece | null = board.getPieceAt(initialPosition);
 
     assert(piece != null);
 

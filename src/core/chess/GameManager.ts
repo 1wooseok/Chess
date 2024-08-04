@@ -1,9 +1,9 @@
 import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
-import Board from "./board/Board";
+import Board from "../board/Board";
 
-export default class ChessManager {
-    private static instance: ChessManager | null = null;
+export default class GameManager {
+    private static _instance: GameManager | null = null;
     private _board: Board;
     private _status: EGameStatus;
     private _moveCount: number;
@@ -15,23 +15,23 @@ export default class ChessManager {
     }
 
     static createInstance(board: Board): void {
-        console.assert(ChessManager.instance === null);
+        console.assert(GameManager._instance === null);
 
-        ChessManager.instance = new ChessManager(board);
+        GameManager._instance = new GameManager(board);
     }
 
-    static getInstance(): ChessManager {
-        if (ChessManager.instance === null) {
+    static get instance(): GameManager {
+        if (GameManager._instance === null) {
             throw "No instance was created before get()";
         }
 
-        return ChessManager.instance;
+        return GameManager._instance;
     }
 
     static deleteInstance(): void {
-        console.assert(ChessManager.instance !== null);
+        console.assert(GameManager._instance !== null);
 
-        ChessManager.instance = null;
+        GameManager._instance = null;
     }
 
     get currentPlayer(): EColor {

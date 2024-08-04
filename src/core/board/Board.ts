@@ -1,12 +1,12 @@
-import EColor from "../../enum/EColor";
-import Bishop from "../../piece/bishop/Bishop";
-import King from "../../piece/king/King";
-import Knight from "../../piece/knight/Knight";
-import Piece from "../../piece/Piece";
-import Queen from "../../piece/queen/Queen";
-import Rook from "../../piece/rook/Rook";
+import EColor from "../enum/EColor";
+import Bishop from "../piece/bishop/Bishop";
+import King from "../piece/king/King";
+import Knight from "../piece/knight/Knight";
+import Piece from "../piece/Piece";
+import Queen from "../piece/queen/Queen";
+import Rook from "../piece/rook/Rook";
 import Position from "../Position";
-import Pawn from "../../piece/pawn/Pawn";
+import Pawn from "../piece/pawn/Pawn";
 
 
 export default class Board {
@@ -28,7 +28,7 @@ export default class Board {
     // TODO: 이벤트 발생할때마다 호출되는지 확인 필요
     onMoveStart(position: Position): void {
         console.log("[EVENT]: Drag start");
-        const piece = this.getPieceOrNull(position);
+        const piece = this.getPieceAt(position);
         if (piece === null) {
             return;
         }
@@ -47,7 +47,7 @@ export default class Board {
         this._selectedPiece.move(this, position);
     }
 
-    getPieceOrNull(position: Position): Piece | null {
+    getPieceAt(position: Position): Piece | null {
         if (!this.isValidPosition(position)) {
             throw `[VALIDATION ERROR]: ${position}`;
         }
@@ -107,7 +107,7 @@ export default class Board {
             for (let x = 0; x < this.grid[y].length; ++x) {
                 stringBuilder.push('|');
 
-                const p = this.getPieceOrNull(new Position(x, y));
+                const p = this.getPieceAt(new Position(x, y));
                 stringBuilder.push(p === null ? ' ' : p.symbol);
             }
             stringBuilder.push('|');

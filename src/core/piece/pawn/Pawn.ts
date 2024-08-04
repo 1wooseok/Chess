@@ -1,5 +1,5 @@
-import Board from "../../chess/board/Board";
-import Position from "../../chess/Position";
+import Board from "../../board/Board";
+import Position from "../../Position";
 import EColor from "../../enum/EColor";
 import Piece from "../Piece";
 
@@ -20,18 +20,18 @@ export default class Pawn extends Piece {
         const dy = super.color === EColor.White ? -1 : 1;
 
         const forward = new Position(x, y + dy);
-        if (board.isValidPosition(forward) && board.getPieceOrNull(forward) === null) {
+        if (board.isValidPosition(forward) && board.getPieceAt(forward) === null) {
             movablePositions.push(forward);
 
             const doubleForward = new Position(x, y + 2 * dy);
-            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceOrNull(doubleForward) === null) {
+            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceAt(doubleForward) === null) {
                 movablePositions.push(doubleForward);
             }
         }
 
         const diagonalLeft = new Position(x - 1, y + dy);
         if (board.isValidPosition(diagonalLeft)) {
-            const piece = board.getPieceOrNull(diagonalLeft);
+            const piece = board.getPieceAt(diagonalLeft);
             if (piece != null && piece.color !== super.color) {
                 movablePositions.push(diagonalLeft);
             }
@@ -39,7 +39,7 @@ export default class Pawn extends Piece {
 
         const diagonalRight = new Position(x + 1, y + dy);
         if (board.isValidPosition(diagonalRight)) {
-            const piece = board.getPieceOrNull(diagonalRight);
+            const piece = board.getPieceAt(diagonalRight);
             if (piece != null && piece.color !== super.color) {
                 movablePositions.push(diagonalRight);
             }

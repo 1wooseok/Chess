@@ -1,0 +1,20 @@
+.board {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid black;
+
+    width: 800px;
+}
+
+.chess-square {
+    width: 100px;
+    height: 100px;
+}
+
+.white-square {
+    background-color: white;
+}
+
+.black-square {
+    background-color: black;
+}

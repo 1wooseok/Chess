@@ -1,6 +1,6 @@
 import {assert, expect, test} from "vitest";
-import Board from "../../chess/board/Board";
-import Position from "../../chess/Position";
+import Board from "../../board/Board";
+import Position from "../../Position";
 import Bishop from "./Bishop";
 import EColor from "../../enum/EColor";
 import Pawn from "../pawn/Pawn";
@@ -12,7 +12,7 @@ test("first move test", () =>
     const y = 0;
 
     const board = new Board();
-    const piece = board.getPieceOrNull(new Position(x, y));
+    const piece = board.getPieceAt(new Position(x, y));
     assert(piece != null);
 
     expect(piece).instanceof(Bishop);
@@ -30,27 +30,27 @@ test("first kill", () =>
 {
     const board = new Board();
 
-    const blackPawn = board.getPieceOrNull(new Position(3, 1));
+    const blackPawn = board.getPieceAt(new Position(3, 1));
     assert(blackPawn != null);
     expect(blackPawn).instanceof(Pawn);
 
     expect(blackPawn.move(board, new Position(3, 3))).toBe(true);
 
-    const blackLeftBishop = board.getPieceOrNull(new Position(2, 0));
+    const blackLeftBishop = board.getPieceAt(new Position(2, 0));
     assert(blackLeftBishop != null);
 
     expect(blackLeftBishop.getMovablePositions(board).length).toBe(5);
 
     expect(blackLeftBishop.move(board, new Position(7, 5))).toBe(true);
-    expect(board.getPieceOrNull(new Position(2, 0))).toBeNull();
+    expect(board.getPieceAt(new Position(2, 0))).toBeNull();
     board.print();
 
     expect(blackLeftBishop.getMovablePositions(board).length).toBe(6);
 
     expect(blackLeftBishop.move(board, new Position(6, 6))).toBe(true);
-    expect(board.getPieceOrNull(new Position(7, 5))).toBe(null);
-    expect(board.getPieceOrNull(new Position(6, 6))).instanceof(Bishop);
-    expect(board.getPieceOrNull(new Position(6, 6))!.color).toBe(EColor.Black);
+    expect(board.getPieceAt(new Position(7, 5))).toBe(null);
+    expect(board.getPieceAt(new Position(6, 6))).instanceof(Bishop);
+    expect(board.getPieceAt(new Position(6, 6))!.color).toBe(EColor.Black);
 
     board.print();
 });

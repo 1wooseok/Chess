@@ -1,6 +1,6 @@
 import {assert, expect, test} from "vitest";
-import Board from "../../chess/board/Board";
-import Position from "../../chess/Position";
+import Board from "../../board/Board";
+import Position from "../../Position";
 import Pawn from "./Pawn";
 import EColor from "../../enum/EColor";
 
@@ -11,7 +11,7 @@ test("Pawn first move test", () =>
     const y = 1;
 
     const board = new Board();
-    const piece = board.getPieceOrNull(new Position(x, y));
+    const piece = board.getPieceAt(new Position(x, y));
     assert(piece != null);
 
     expect(piece).instanceof(Pawn);
@@ -34,14 +34,14 @@ test("Pawn's first kill", () =>
     const board = new Board();
 
     // white
-    const whitePawn = board.getPieceOrNull(new Position(1, 6));
+    const whitePawn = board.getPieceAt(new Position(1, 6));
     assert(whitePawn != null);
     expect(whitePawn).instanceof(Pawn);
     expect(whitePawn.color).toBe(EColor.White);
     expect(whitePawn.move(board, new Position(1, 4))).toBe(true);
 
     // black
-    const blackPawn = board.getPieceOrNull(new Position(0, 1));
+    const blackPawn = board.getPieceAt(new Position(0, 1));
     assert(blackPawn != null);
     expect(blackPawn).instanceof(Pawn);
     expect(blackPawn.color).toBe(EColor.Black);
@@ -53,8 +53,8 @@ test("Pawn's first kill", () =>
     expect(whiteMovablePositions.length).toBe(2);
 
     whitePawn.move(board, new Position(0, 3));
-    expect(board.getPieceOrNull(new Position(0, 3))?.color).toBe(EColor.White);
-    expect(board.getPieceOrNull(new Position(1, 4))).toBeNull();
+    expect(board.getPieceAt(new Position(0, 3))?.color).toBe(EColor.White);
+    expect(board.getPieceAt(new Position(1, 4))).toBeNull();
 
     board.print();
 });

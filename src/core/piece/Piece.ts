@@ -1,5 +1,5 @@
-import Board from "../chess/board/Board";
-import Position from "../chess/Position";
+import Board from "../board/Board";
+import Position from "../Position";
 import EColor from "../enum/EColor";
 
 
@@ -56,7 +56,7 @@ export default abstract class Piece {
 
         while (board.isValidPosition(new Position(x, y))) {
             const p = new Position(x, y);
-            const piece = board.getPieceOrNull(p);
+            const piece = board.getPieceAt(p);
 
             if (piece != null) {
                 if (piece.color !== this.color) {
@@ -83,7 +83,7 @@ export default abstract class Piece {
             const p = new Position(x, y);
 
             if (board.isValidPosition(p)) {
-                const other = board.getPieceOrNull(p);
+                const other = board.getPieceAt(p);
                 if (other === null || other.color !== this.color) {
                     positions.push(p);
                 }

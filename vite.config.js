@@ -6,7 +6,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // Define your entry point, assuming src/index.ts is your entry file
-        index: path.resolve(__dirname, 'src/index.ts')
+        index: path.resolve(__dirname, 'src/web/index.ts')
       },
       output: {
         // Custom file name for the index entry file
