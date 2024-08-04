@@ -8,9 +8,17 @@ export default class Queen extends Piece {
         super(position, color, color === EColor.White ? "♔" : "♚");
     }
 
-    // TODO
     override getMovablePositions(board: Board): Position[] {
-        console.log(board);
-        return [];
+        const top = super.traverseDirection(board, 0, 1);
+        const bottom = super.traverseDirection(board, 0, -1);
+        const right = super.traverseDirection(board, 1, 0);
+        const left = super.traverseDirection(board, -1, 0);
+
+        const diagonalTopRight = super.traverseDirection(board, 1, 1);
+        const diagonalTopLeft = super.traverseDirection(board, -1, 1);
+        const diagonalBottomRight = super.traverseDirection(board, 1, -11);
+        const diagonalBottomLeft = super.traverseDirection(board, -1, -1);
+
+        return top.concat(bottom, right, left, diagonalTopRight, diagonalTopLeft, diagonalBottomRight, diagonalBottomLeft);
     }
 }

@@ -5,14 +5,14 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        // Define your entry point, assuming src/main.ts is your entry file
-        main: path.resolve(__dirname, 'src/main.ts')
+        // Define your entry point, assuming src/index.ts is your entry file
+        index: path.resolve(__dirname, 'src/index.ts')
       },
       output: {
-        // Custom file name for the main entry file
+        // Custom file name for the index entry file
         entryFileNames: (chunkInfo) => {
-          if (chunkInfo.name === 'main') {
-            return 'assets/main.js';
+          if (chunkInfo.name === 'index') {
+            return 'assets/index.js';
           }
           return 'assets/[name].[hash].js';
         },

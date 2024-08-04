@@ -8,13 +8,11 @@ export default abstract class Piece {
     private readonly _SYMBOL: string;
 
     private _position: Position;
-    private _isAlive: boolean;
 
     protected constructor(position: Position, color: EColor, symbol: string) {
         this._COLOR = color;
         this._SYMBOL = symbol;
         this._position = position;
-        this._isAlive = true;
     }
 
     get color(): EColor {
@@ -25,16 +23,8 @@ export default abstract class Piece {
         return this._position;
     }
 
-    get isAlive(): boolean {
-        return this._isAlive;
-    }
-
     get symbol(): string {
         return this._SYMBOL;
-    }
-
-    protected kill(other: Piece): void { // TODO:  vs protected
-        other._isAlive = false;
     }
 
     // 비어 있는 칸이나 상대방의 기물이 차지하는 칸으로 이동할 수 있으며, 해당 칸의 상대방 기물은 포획되어 제거된다.
@@ -46,11 +36,6 @@ export default abstract class Piece {
             // 2. Boolean flag : 사용자가 이상한 칸에 Drag & Drop 하는것도 허용
             console.error("[MOVE ERROR] :", nextPosition);
             return false;
-        }
-
-        const other = board.getPieceOrNull(nextPosition);
-        if (other != null) {
-            this.kill(other);
         }
 
         // TODO: 이렇게 하면 죽은 말 따로 못모을. 근데 죽은걸 저장할 필요가 있나?
@@ -68,5 +53,31 @@ export default abstract class Piece {
 
     private isMoveablePosition(moveablePositions: Position[], position: Position): boolean {
         return Boolean(moveablePositions.find((p) => p.isSame(position)));
+    }
+
+    protected traverseDirection(board: Board, dx: number, dy: number): Position[] {
+        const positions: Position[] = [];
+
+        let x = this.position.x + dx;
+        let y = this.position.y + dy;
+
+        while (board.isValidPosition(new Position(x, y))) {
+            const p = new Position(x, y);
+            const piece = board.getPieceOrNull(p);
+
+            if (piece != null) {
+                if (piece.color !== this.color) {
+                    positions.push(new Position(x, y));
+                }
+
+                break;
+            }
+
+            positions.push(p);
+            x += dx;
+            y += dy;
+        }
+
+        return positions;
     }
 }
