@@ -9,11 +9,8 @@ export default class Bishop extends Piece {
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const diagonalTopLeft = super.traverseDirection(board, -1, 1);
-        const diagonalTopRight = super.traverseDirection(board, 1, 1);
-        const diagonalBottomLeft = super.traverseDirection(board, -1, -1);
-        const diagonalBottomRight = super.traverseDirection(board, 1, -1);
+        const deltas = [[-1, 1], [1, 1], [-1, -1], [1, -1]];
 
-        return diagonalTopLeft.concat(diagonalTopRight, diagonalBottomLeft, diagonalBottomRight);
+        return deltas.flatMap(([x, y]) => super.traverseDirection(board, x, y));
     }
 }

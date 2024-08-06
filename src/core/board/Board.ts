@@ -11,40 +11,15 @@ import Pawn from "../piece/pawn/Pawn";
 
 export default class Board {
     static readonly SIZE = 8;
-
-    private readonly _grid: (Piece | null)[][];
-    private _selectedPiece: Piece | null = null;
+    private _grid: (Piece | null)[][];
 
     constructor() {
         this._grid = new Array(Board.SIZE);
-
         this.initBoard();
     }
 
     get grid(): (Piece | null)[][] {
         return this._grid;
-    }
-
-    // TODO: 이벤트 발생할때마다 호출되는지 확인 필요
-    onMoveStart(position: Position): void {
-        console.log("[EVENT]: Drag start");
-        const piece = this.getPieceAt(position);
-        if (piece === null) {
-            return;
-        }
-
-        this._selectedPiece = piece;
-        const moveablePositions = piece.getMovablePositions(this);
-        // TODO: 화면에 moveablePositions 보여주기
-        console.error(moveablePositions);
-    }
-
-    onMoveEnd(position: Position): void {
-        if (this._selectedPiece === null) {
-            return;
-        }
-
-        this._selectedPiece.move(this, position);
     }
 
     getPieceAt(position: Position): Piece | null {
@@ -55,11 +30,10 @@ export default class Board {
         return this._grid[position.y][position.x];
     }
 
-    setPiece(position: Position, pieceOrNull: Piece | null): void {
+    setPieceAt(position: Position, pieceOrNull: Piece | null): void {
         this._grid[position.y][position.x] = pieceOrNull;
     }
 
-    // TODO: x, y number로 받게 수정.
     isValidPosition(position: Position): boolean {
         console.assert(position !== null);
 
@@ -67,37 +41,52 @@ export default class Board {
     }
 
     private initBoard(): void {
-        for (let i = 0; i < Board.SIZE; ++i) {
-            this._grid[i] = new Array(Board.SIZE);
-
-            for (let j = 0; j < Board.SIZE; ++j) {
-                const position: Position = new Position(j, i);
-                const color: EColor = i < 2 ? EColor.Black : EColor.White;
-
-                switch (i) {
-                    case 0:
-                    case 7:
-                        if (j === 0 || j === 7) {
-                            this._grid[i][j] = new Rook(position, color);
-                        } else if (j === 1 || j === 6) {
-                            this._grid[i][j] = new Knight(position, color);
-                        } else if (j === 2 || j === 5) {
-                            this._grid[i][j] = new Bishop(position, color);
-                        } else if (j === 3) {
-                            this._grid[i][j] = new King(position, color);
-                        } else if (j === 4) {
-                            this._grid[i][j] = new Queen(position, color);
-                        }
-                        break;
-                    case 1:
-                    case 6:
-                        this._grid[i][j] = new Pawn(position, color);
-                        break;
-                    default:
-                        this._grid[i][j] = null;
-                }
-            }
-        }
+        this._grid = [
+            [
+                new Rook(new Position(0, 0), EColor.Black),
+                new Knight(new Position(1, 0), EColor.Black),
+                new Bishop(new Position(2, 0), EColor.Black),
+                new Queen(new Position(3, 0), EColor.Black),
+                new King(new Position(4, 0), EColor.Black),
+                new Bishop(new Position(5, 0), EColor.Black),
+                new Knight(new Position(6, 0), EColor.Black),
+                new Rook(new Position(7, 0), EColor.Black)
+            ],
+            [
+                new Pawn(new Position(0, 1), EColor.Black),
+                new Pawn(new Position(1, 1), EColor.Black),
+                new Pawn(new Position(2, 1), EColor.Black),
+                new Pawn(new Position(3, 1), EColor.Black),
+                new Pawn(new Position(4, 1), EColor.Black),
+                new Pawn(new Position(5, 1), EColor.Black),
+                new Pawn(new Position(6, 1), EColor.Black),
+                new Pawn(new Position(7, 1), EColor.Black),
+            ],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [
+                new Pawn(new Position(0, 6), EColor.White),
+                new Pawn(new Position(1, 6), EColor.White),
+                new Pawn(new Position(2, 6), EColor.White),
+                new Pawn(new Position(3, 6), EColor.White),
+                new Pawn(new Position(4, 6), EColor.White),
+                new Pawn(new Position(5, 6), EColor.White),
+                new Pawn(new Position(6, 6), EColor.White),
+                new Pawn(new Position(7, 6), EColor.White),
+            ],
+            [
+                new Rook(new Position(0, 7), EColor.White),
+                new Knight(new Position(1, 7), EColor.White),
+                new Bishop(new Position(2, 7), EColor.White),
+                new Queen(new Position(3, 7), EColor.White),
+                new King(new Position(4, 7), EColor.White),
+                new Bishop(new Position(5, 7), EColor.White),
+                new Knight(new Position(6, 7), EColor.White),
+                new Rook(new Position(7, 7), EColor.White)
+            ],
+        ];
     }
 
     print(): void {

@@ -9,16 +9,8 @@ export default class Queen extends Piece {
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const top = super.traverseDirection(board, 0, 1);
-        const bottom = super.traverseDirection(board, 0, -1);
-        const right = super.traverseDirection(board, 1, 0);
-        const left = super.traverseDirection(board, -1, 0);
+        const deltas = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, 1], [-1, -1], [1, -1]];
 
-        const diagonalTopRight = super.traverseDirection(board, 1, 1);
-        const diagonalTopLeft = super.traverseDirection(board, -1, 1);
-        const diagonalBottomRight = super.traverseDirection(board, 1, -11);
-        const diagonalBottomLeft = super.traverseDirection(board, -1, -1);
-
-        return top.concat(bottom, right, left, diagonalTopRight, diagonalTopLeft, diagonalBottomRight, diagonalBottomLeft);
+        return deltas.flatMap(([x, y]) => super.traverseDirection(board, x, y));
     }
 }
