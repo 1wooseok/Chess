@@ -8,7 +8,7 @@ export default class Pawn extends Piece {
     private _isFirstMove: boolean;
 
     constructor(position: Position, color: EColor) {
-        super(position, color, color === EColor.White ? "♙" : "♟");
+        super(position, color, color == EColor.White ? "♙" : "♟");
 
         this._isFirstMove = true;
     }
@@ -17,14 +17,14 @@ export default class Pawn extends Piece {
         const movablePositions: Position[] = [];
         const x = super.position.x;
         const y = super.position.y;
-        const dy = super.color === EColor.White ? -1 : 1;
+        const dy = super.color == EColor.White ? -1 : 1;
 
         const forward = new Position(x, y + dy);
-        if (board.isValidPosition(forward) && board.getPieceAt(forward) === null) {
+        if (board.isValidPosition(forward) && board.getPieceAt(forward) == null) {
             movablePositions.push(forward);
 
             const doubleForward = new Position(x, y + 2 * dy);
-            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceAt(doubleForward) === null) {
+            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceAt(doubleForward) == null) {
                 movablePositions.push(doubleForward);
             }
         }
@@ -32,7 +32,7 @@ export default class Pawn extends Piece {
         const diagonalLeft = new Position(x - 1, y + dy);
         if (board.isValidPosition(diagonalLeft)) {
             const piece = board.getPieceAt(diagonalLeft);
-            if (piece != null && piece.color !== super.color) {
+            if (piece != null && piece.color != super.color) {
                 movablePositions.push(diagonalLeft);
             }
         }
@@ -40,7 +40,7 @@ export default class Pawn extends Piece {
         const diagonalRight = new Position(x + 1, y + dy);
         if (board.isValidPosition(diagonalRight)) {
             const piece = board.getPieceAt(diagonalRight);
-            if (piece != null && piece.color !== super.color) {
+            if (piece != null && piece.color != super.color) {
                 movablePositions.push(diagonalRight);
             }
         }

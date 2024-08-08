@@ -11,7 +11,7 @@ export default defineConfig({
       output: {
         // Custom file name for the index entry file
         entryFileNames: (chunkInfo) => {
-          if (chunkInfo.name === 'index') {
+          if (chunkInfo.name == 'index') {
             return 'assets/index.js';
           }
           return 'assets/[name].[hash].js';

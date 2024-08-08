@@ -30,6 +30,7 @@ export default abstract class Piece {
 
     move(board: Board, nextPosition: Position): boolean {
         if (!this.canMoveTo(board, nextPosition)) {
+
             // TODO: Error throw vs Boolean flag
             // 1. Error Throw : 사용자가 이상한 칸에 Drag & Drop 못하게, 이벤트 처리 함수에서 early exit 로직필요
             // 2. Boolean flag : 사용자가 이상한 칸에 Drag & Drop 하는것도 허용
@@ -57,7 +58,7 @@ export default abstract class Piece {
             const piece = board.getPieceAt(p);
 
             if (piece != null) {
-                if (piece.color !== this.color) {
+                if (piece.color != this.color) {
                     positions.push(new Position(x, y));
                 }
 
@@ -82,7 +83,7 @@ export default abstract class Piece {
 
             if (board.isValidPosition(p)) {
                 const other = board.getPieceAt(p);
-                if (other === null || other.color !== this.color) {
+                if (other == null || other.color != this.color) {
                     result.push(p);
                 }
             }

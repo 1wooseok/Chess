@@ -26,7 +26,7 @@ export default class WebApplication {
             for (let x = 0; x < grid[y].length; x++) {
                 const square = document.createElement('div');
                 square.classList.add('chess-square');
-                square.classList.add((y + x) % 2 === 0 ? 'white-square' : 'black-square');
+                square.classList.add((y + x) % 2 == 0 ? 'white-square' : 'black-square');
 
                 const symbol = grid[y][x]?.symbol;
                 if (symbol) {

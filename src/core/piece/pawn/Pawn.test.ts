@@ -17,7 +17,7 @@ test("Pawn first move test", () =>
     expect(piece).instanceof(Pawn);
 
     const moveablePositions = piece.getMovablePositions(board);
-    expect(moveablePositions.length === 2);
+    expect(moveablePositions.length == 2);
 
     const invalidPosition = new Position(x + 1, y + 3);
     expect(piece.move(board, invalidPosition)).toBe(false);

@@ -25,6 +25,6 @@ export default class Position {
     }
 
     isSame(other: Position): boolean {
-        return this._x === other.x && this._y === other.y;
+        return this._x == other.x && this._y == other.y;
     }
 }

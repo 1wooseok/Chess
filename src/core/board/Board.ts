@@ -35,7 +35,7 @@ export default class Board {
     }
 
     isValidPosition(position: Position): boolean {
-        console.assert(position !== null);
+        console.assert(position != null);
 
         return 0 <= position.x && position.x < Board.SIZE && 0 <= position.y && position.y < Board.SIZE;
     }
@@ -97,7 +97,7 @@ export default class Board {
                 stringBuilder.push('|');
 
                 const p = this.getPieceAt(new Position(x, y));
-                stringBuilder.push(p === null ? ' ' : p.symbol);
+                stringBuilder.push(p == null ? ' ' : p.symbol);
             }
             stringBuilder.push('|');
             stringBuilder.push('\n');
