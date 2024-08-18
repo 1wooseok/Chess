@@ -7,18 +7,19 @@ import Queen from "../piece/queen/Queen";
 import Rook from "../piece/rook/Rook";
 import Position from "../Position";
 import Pawn from "../piece/pawn/Pawn";
+import {Grid} from "./type";
 
 
 export default class Board {
     static readonly SIZE = 8;
-    private _grid: (Piece | null)[][];
+    private _grid: Grid;
 
     constructor() {
         this._grid = new Array(Board.SIZE);
         this.initBoard();
     }
 
-    get grid(): (Piece | null)[][] {
+    get grid(): Grid {
         return this._grid;
     }
 
@@ -30,8 +31,8 @@ export default class Board {
         return this._grid[position.y][position.x];
     }
 
-    setPieceAt(position: Position, pieceOrNull: Piece | null): void {
-        this._grid[position.y][position.x] = pieceOrNull;
+    setPieceAt( position: Position, piece: Piece | null): void {
+        this._grid[position.y][position.x] = piece;
     }
 
     isValidPosition(position: Position): boolean {

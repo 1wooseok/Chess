@@ -1,16 +1,23 @@
 import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
 import Board from "../board/Board";
-import Position from "../Position";
+import {Grid} from "../board/type";
 import Piece from "../piece/Piece";
+import Position from "../Position";
 import King from "../piece/king/King";
+
+export type Observer = (grid: Grid, color: EColor) => void;
 
 export default class GameManager {
     private static _instance: GameManager | null = null;
-    private _board: Board;
+    private readonly _board: Board;
     private _status: EGameStatus = EGameStatus.None;
     private _moveCount: number = 1;
-    private readonly _deadPieces: Piece[] = [];
+    // TODO: 이렇게 처리하는게 맞는건지 모르겠음
+    private _selectedPiece: Piece | null = null;
+    private _selectedPosition: Position | null = null;
+    private observers: Observer[] = [];
+    private _deadPieces: Piece[] = [];
 
     private constructor(board: Board) {
         this._board = board;
@@ -56,65 +63,80 @@ export default class GameManager {
         return this._moveCount;
     }
 
-    // move ->
-    // TODO: move piece vs board
-    // * move를 piece에서 했을떄의 장점
-    //  1. 코드가 깔끔해진다. ( 자신의 상태를 자기가 책임진다고 보는 개념 )
-    // 1.
-    movePiece(from: Position, to: Position): boolean {
-        //#region 1. move
-        // const curr = this.board.getPieceAt(from)!;
-        // console.assert(curr != null, { target: curr, from });
-        // const target = this.board.getPieceAt(to);
-        // if (target != null) {
-        //     this._deadPieces.push(target);
-        // }
-        // this._board.setPieceAt(to, curr);
-
-        const piece = this.board.getPieceAt(from);
-        console.assert(piece != null, { target: piece, from });
-
-        const success = piece!.move(this.board, to);
-        if (success) {
-            this.update(piece!, to);
-        }
-
-        return success;
-        //#endregion
+    get deadPieces(): Piece[] {
+        return this._deadPieces;
     }
 
-    // * board에서 move했을떄
-    //  1. move queue 같은게 필요함.
-    //  2. 죽은 말을 보관할 수 있음.
-    //  3. update 순서를 한곳에서 관리할 수 있음.
-    //  4. move할때 game status도 같이 계산해서 불필요한 반복 줄일 수 있음. ( 보드 전체 순회 vs movable-position 만 순회 )
-    update(piece: Piece, nextPosition: Position) {
+    registerCurrentFrameMovePiece(piece: Piece, nextPosition: Position): void {
+        this._selectedPiece = piece;
+        this._selectedPosition = nextPosition;
+        this.update();
+    }
 
-        //#region 2. check game status
-        const isKingDead = Boolean(this._deadPieces.find((p) => p instanceof King));
-        if (isKingDead) {
-            this._status = EGameStatus.Over;
-            return;
+    private update(): void {
+        console.assert(this._selectedPosition != null, { selectedPosition: this._selectedPosition });
+        console.assert(this._selectedPiece != null, { selectedPiece: this._selectedPiece });
+
+        const target = this._board.getPieceAt(this._selectedPosition!);
+        if (target != null) {
+            this._deadPieces.push(target);
         }
+        this._selectedPiece!.move(this.board, this._selectedPosition!);
+        this.clearFrame();
+    }
 
-        const movablePositions = curr!.getMovablePositions(this.board);
-        const isCheckmate = curr instanceof King && movablePositions.length == 0;
-        if (isCheckmate) {
+    private checkStatus(): void {
+        // 게임 상태는 move 이후에 결정됨.
+        if (this.isCheck()) {
+            this._status = EGameStatus.Check;
+        } else if (this.isCheckMate()) {
             this._status = EGameStatus.Checkmate;
         }
-        for (const position of movablePositions) {
-            const piece = this._board.getPieceAt(position);
-            console.assert(piece == null || piece.color != this.currentPlayer);
-            const isKing = piece != null && piece instanceof King;
-            if (isKing) {
-                this._status = EGameStatus.Check;
-            }
+            // 최근 움직인 말의 movable position에 상대방의 king이 있는 경우
+            //
+    }
+
+    subscribe(observer: Observer): void {
+        this.observers.push(observer);
+    }
+
+    private notifyChange(): void {
+        for (const observer of this.observers) {
+            observer(this.board.grid, this.currentPlayer);
         }
+    }
 
-        // TODO: stale mate
-        // TODO: 50 move rule
-        //#endregion
-
+    private clearFrame(): void {
         ++this._moveCount;
+        this._selectedPiece = null;
+        this._selectedPosition = null;
+        this.notifyChange();
+    }
+
+    // TODO: 어떤 말이 움직일때, 그 위치로 갓을때 check가 되는지 확인해서 ealry exit 해야 함.
+    // 1. 말을 drop 했을떄 check가 되는 위치인 경우 취소시키는 방법 ( 자기 위치에 다시 놧을때랑 같은느낌 )
+    // 2. 각 piece의 getMovablePositions 함수에서 애초에 check가 되는 위치는 걸러서 화면에 보여주는 방법.
+    isCheck(): boolean {
+        console.assert(this._selectedPiece != null);
+        console.assert(this._selectedPiece!.position.isSame(this._selectedPosition!));
+
+        const movablePositions = this._selectedPiece!.getMovablePositions(this._board);
+
+        return movablePositions.some((position) => {
+            const targetPieceOrNull = this._board.getPieceAt(position);
+
+            return targetPieceOrNull != null && targetPieceOrNull.color != this._selectedPiece?.color && targetPieceOrNull instanceof King;
+        });
+    }
+
+    private isCheckMate(): boolean {
+        console.assert(this._status == EGameStatus.Check);
+        console.assert(this._selectedPosition != null);
+        // 더이상 갈수있는 곳이 없을때 이긴 함.
+        // 움직일 수 있는 곳을
+        const king = this._board.getPieceAt(this._selectedPosition!);
+        console.assert(king != null && king instanceof King, { king, selectedPosition: this._selectedPosition });
+
+        return king!.getMovablePositions(this._board).length == 0;
     }
 }

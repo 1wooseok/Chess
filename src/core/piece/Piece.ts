@@ -1,6 +1,7 @@
 import Board from "../board/Board";
 import Position from "../Position";
 import EColor from "../enum/EColor";
+import GameManager from "../chess/GameManager";
 
 
 export default abstract class Piece {
@@ -28,24 +29,20 @@ export default abstract class Piece {
 
     abstract getMovablePositions(board: Board): Position[];
 
+    // TODO: 이쪽 애매함.
     move(board: Board, nextPosition: Position): boolean {
-        if (!this.canMoveTo(board, nextPosition)) {
-
-            // TODO: Error throw vs Boolean flag
-            // 1. Error Throw : 사용자가 이상한 칸에 Drag & Drop 못하게, 이벤트 처리 함수에서 early exit 로직필요
-            // 2. Boolean flag : 사용자가 이상한 칸에 Drag & Drop 하는것도 허용
-            console.error("[MOVE ERROR] :", nextPosition);
-            return false;
-        }
-
-        // TODO: 이렇게 하면 죽은 말 따로 못모음.
-        //  근데 죽은걸 저장할 필요가 있나?
         board.setPieceAt(this._position, null);
         this._position = nextPosition;
         board.setPieceAt(this._position, this);
 
         return true;
     }
+
+    onMove(nextPosition: Position): void {
+        GameManager.instance.registerCurrentFrameMovePiece(this, nextPosition);
+    }
+
+    //
 
     protected traverseDirection(board: Board, dx: number, dy: number): Position[] {
         const positions: Position[] = [];
@@ -73,12 +70,13 @@ export default abstract class Piece {
         return positions;
     }
 
+    // TODO: 함수가 명확하지 않음
     protected filterInvalidPosition(board: Board, positions: Position[]): Position[] {
         const result: Position[] = [];
 
-        for (const d of positions) {
-            const x = this.position.x + d.x;
-            const y = this.position.y + d.y;
+        for (const delta of positions) {
+            const x = this.position.x + delta.x;
+            const y = this.position.y + delta.y;
             const p = new Position(x, y);
 
             if (board.isValidPosition(p)) {
@@ -92,7 +90,17 @@ export default abstract class Piece {
         return result;
     }
 
-    private canMoveTo(board: Board, position: Position): boolean {
-        return Boolean(this.getMovablePositions(board).find((p) => p.isSame(position)));
+    protected filterInvalidPosition2(board: Board, positions: Position[]): Position[] {
+        return positions
+            .map(delta => {
+                const dx = this.position.x + delta.x;
+                const dy = this.position.y + delta.y;
+                return new Position(dx, dy);
+            })
+            .filter(p =>
+                board.isValidPosition(p) &&
+                (board.getPieceAt(p) == null || board.getPieceAt(p)?.color != this.color)
+            );
     }
+
 }
