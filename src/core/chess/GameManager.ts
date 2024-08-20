@@ -10,7 +10,7 @@ export type Observer = (grid: Grid, color: EColor) => void;
 
 export default class GameManager {
     private static _instance: GameManager | null = null;
-    private readonly _board: Board;
+    private readonly _board: Board = new Board();
     private _status: EGameStatus = EGameStatus.None;
     private _moveCount: number = 1;
     // TODO: 이렇게 처리하는게 맞는건지 모르겠음
@@ -19,28 +19,15 @@ export default class GameManager {
     private observers: Observer[] = [];
     private _deadPieces: Piece[] = [];
 
-    private constructor(board: Board) {
-        this._board = board;
-    }
-
-    static createInstance(board: Board): void {
-        console.assert(GameManager._instance == null);
-
-        GameManager._instance = new GameManager(board);
+    private constructor() {
     }
 
     static get instance(): GameManager {
         if (GameManager._instance == null) {
-            throw "No instance was created before get()";
+            GameManager._instance = new GameManager();
         }
 
         return GameManager._instance;
-    }
-
-    static deleteInstance(): void {
-        console.assert(GameManager._instance != null);
-
-        GameManager._instance = null;
     }
 
     get board(): Board {
@@ -53,10 +40,6 @@ export default class GameManager {
 
     get status(): EGameStatus {
         return this._status;
-    }
-
-    set status(value: EGameStatus) {
-        this._status = value;
     }
 
     get moveCount(): number {
