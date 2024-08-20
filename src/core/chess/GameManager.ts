@@ -50,13 +50,15 @@ export default class GameManager {
         return this._deadPieces;
     }
 
-    registerCurrentFrameMovePiece(piece: Piece, nextPosition: Position): void {
-        this._selectedPiece = piece;
-        this._selectedPosition = nextPosition;
-        this.update();
+    set selectedPiece(value: Piece | null) {
+        this._selectedPiece = value;
     }
 
-    private update(): void {
+    set selectedPosition(value: Position | null) {
+        this._selectedPosition = value;
+    }
+
+    update(): void {
         console.assert(this._selectedPosition != null, { selectedPosition: this._selectedPosition });
         console.assert(this._selectedPiece != null, { selectedPiece: this._selectedPiece });
 

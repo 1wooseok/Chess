@@ -1,8 +1,6 @@
 import Board from "../board/Board";
 import Position from "../Position";
 import EColor from "../enum/EColor";
-import GameManager from "../chess/GameManager";
-
 
 export default abstract class Piece {
     private readonly _COLOR: EColor;
@@ -37,12 +35,6 @@ export default abstract class Piece {
 
         return true;
     }
-
-    onMove(nextPosition: Position): void {
-        GameManager.instance.registerCurrentFrameMovePiece(this, nextPosition);
-    }
-
-    //
 
     protected traverseDirection(board: Board, dx: number, dy: number): Position[] {
         const positions: Position[] = [];

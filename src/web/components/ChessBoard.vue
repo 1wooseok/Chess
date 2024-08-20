@@ -66,10 +66,12 @@ function handleDragStart(x: number, y: number): void {
   const position = new Position(x, y);
   const piece = board.getPieceAt(position);
   if (piece == null || piece.color != ref_currentPlayer.value) {
+    gameManager.selectedPiece = null;
     return;
   }
 
   ref_selectedPiece.value = piece;
+  gameManager.selectedPiece = piece;
 }
 
 function handleDragOver(e: Event): void {
@@ -78,17 +80,17 @@ function handleDragOver(e: Event): void {
 
 function handleDrop(x: number, y: number): void {
   if (!isMoveablePosition(x, y)) {
-    clear();
+    clearState();
     return;
   }
 
   console.assert(ref_selectedPiece.value != null, { x, y });
-  ref_selectedPiece.value!.onMove(new Position(x, y));
-
-  clear();
+  gameManager.selectedPosition =  new Position(x, y);
+  gameManager.update();
+  clearState();
 }
 
-function clear(): void {
+function clearState(): void {
   ref_selectedPiece.value = null;
 }
 </script>
