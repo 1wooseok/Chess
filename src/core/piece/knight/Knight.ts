@@ -9,7 +9,7 @@ export default class Knight extends Piece {
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const directions = [
+        const deltas = [
             new Position(-1, -2),
             new Position(-2, -1),
             new Position(1, -2),
@@ -20,6 +20,6 @@ export default class Knight extends Piece {
             new Position(2, 1),
         ];
 
-        return super.filterInvalidPosition(board, directions);
+        return deltas.filter(p => board.isValidPosition(p));
     }
 }

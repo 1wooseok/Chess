@@ -25,18 +25,58 @@ export default abstract class Piece {
         return this._symbol;
     }
 
-    protected abstract getMovablePositions(board: Board): Position[];
-
-    protected getAttackablePositions(board: Board): Position[] {
-        return this.getMovablePositions(board);
-    }
-
     move(board: Board, nextPosition: Position): boolean {
         board.setPieceAt(this._position, null);
         this._position = nextPosition;
         board.setPieceAt(this._position, this);
 
         return true;
+    }
+
+    // TODO: rename
+    calcMovablePositions(board: Board): Position[] {
+        const result: Position[] = [];
+        const movablePositions: Position[] = this.getMovablePositions(board);
+        const kingsPosition = board.findKing(this._color).position;
+
+        for (const movablePosition of movablePositions) {
+            let flag = true;
+            const tmpPiece = board.getPieceAt(movablePosition);
+            const tmpPosition = this._position.copy();
+            // move
+            board.setPieceAt(tmpPosition, null);
+            this.position.x = movablePosition.x;
+            this.position.y = movablePosition.y;
+            board.setPieceAt(movablePosition, this);
+
+
+            const dangerousPosition = this.getPotentiallyAttackedPositions(board, this._color);
+            for (const dp of dangerousPosition) {
+                if (dp.isSame(kingsPosition)) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                result.push(movablePosition);
+            }
+
+            // back
+            this._position.x = tmpPosition.x;
+            this._position.y = tmpPosition.y;
+            board.setPieceAt(tmpPosition, this);
+            board.setPieceAt(movablePosition, tmpPiece);
+        }
+
+
+        return result;
+    }
+
+    protected abstract getMovablePositions(board: Board): Position[];
+    // Pawn: (공격 위치 != 이동 위차) / 나머지: (공격 위치 == 이동 위치)
+    protected getAttackablePositions(board: Board): Position[] {
+        return this.getMovablePositions(board);
     }
 
     protected traverseDirection(board: Board, dx: number, dy: number): Position[] {
@@ -65,28 +105,7 @@ export default abstract class Piece {
         return positions;
     }
 
-    // TODO: 함수 signature 명확하지 않음
-    protected filterInvalidPosition(board: Board, positions: Position[]): Position[] {
-        const result: Position[] = [];
-
-        for (const delta of positions) {
-            const x = this._position.x + delta.x;
-            const y = this._position.y + delta.y;
-            const p = new Position(x, y);
-
-            if (board.isValidPosition(p)) {
-                const other = board.getPieceAt(p);
-                if (other == null || other.color != this._color) {
-                    result.push(p);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    // TODO: rename: 상대팀이 공격할 수 있는 모든 위치 반환.
-    getDangerousPositions(board: Board, color: EColor): Position[] {
+    private getPotentiallyAttackedPositions(board: Board, color: EColor): Position[] {
         const dangerousPositions: Position[] = [];
 
         for (let y = 0; y < Board.SIZE; ++y) {
@@ -95,53 +114,13 @@ export default abstract class Piece {
 
                 if (piece != null && piece != this && piece.color != color) {
                     const opponentsMovablePositions = piece.getAttackablePositions(board);
-                    for (const omp of opponentsMovablePositions) {
-                        dangerousPositions.push(omp);
+                    for (const pos of opponentsMovablePositions) {
+                        dangerousPositions.push(pos);
                     }
                 }
             }
         }
 
         return dangerousPositions;
-    }
-
-    // TODO: rename
-    calcMovablePositions(board: Board): Position[] {
-        const result: Position[] = [];
-        const movablePositions: Position[] = this.getMovablePositions(board);
-        const kingsPosition = board.findKing(this._color).position;
-
-        for (const movablePosition of movablePositions) {
-            let flag = true;
-            const tmpPiece = board.getPieceAt(movablePosition);
-            const tmpPosition = this._position.copy();
-            // move
-            board.setPieceAt(tmpPosition, null);
-            this.position.x = movablePosition.x;
-            this.position.y = movablePosition.y;
-            board.setPieceAt(movablePosition, this);
-
-
-            const dangerousPosition = this.getDangerousPositions(board, this._color);
-            for (const dp of dangerousPosition) {
-                if (dp.isSame(kingsPosition)) {
-                    flag = false;
-                    break;
-                }
-            }
-
-            if (flag) {
-                result.push(movablePosition);
-            }
-
-            // back
-            this._position.x = tmpPosition.x;
-            this._position.y = tmpPosition.y;
-            board.setPieceAt(tmpPosition, this);
-            board.setPieceAt(movablePosition, tmpPiece);
-        }
-
-
-        return result;
     }
 }

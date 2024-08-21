@@ -1,4 +1,8 @@
 <template>
+  <div>
+    <h2>CurrentPlayer: {{ EColor[ref_currentPlayersColor] }}</h2>
+  </div>
+
   <div class="board">
     <div v-for="(row, y) in ref_grid" :key="y" class="row">
       <div
@@ -13,7 +17,7 @@
           @dragstart="handleDragStart(x, y)"
           @dragover="handleDragOver"
           @drop="handleDrop(x, y)"
-          :draggable="piece?.color == ref_currentPlayer"
+          :draggable="piece?.color == ref_currentPlayersColor"
       >
         <div>
           {{ piece?.symbol }}
@@ -24,94 +28,79 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, computed, onUnmounted} from 'vue';
+import {ref, onMounted, onUnmounted} from 'vue';
 import GameManager from "../../core/chess/GameManager";
 import {Grid} from "../../core/board/type";
 import Position from "../../core/Position";
 import Piece from "../../core/piece/Piece";
 import EColor from "../../core/enum/EColor";
 
-
 const gameManager = GameManager.instance;
 const board = gameManager.board;
+
+// ref
 const ref_grid = ref<Grid>(board.grid);
-const ref_currentPlayer = ref<EColor>(gameManager.currentPlayer);
 const ref_selectedPiece = ref<Piece | null>(null);
-// const comp_movablePositions = computed<Position[]>(() => {
-//   if (ref_selectedPiece.value == null) {
-//     return [];
-//   }
+const ref_movablePositions = ref<Position[]>([]);
+const ref_currentPlayersColor = ref<EColor>(gameManager.currentPlayer);
+
 //
-//   console.count();
-//   // debugger;
-//   const movablePositions = ref_selectedPiece.value.getMovablePositions(board);
-//   return ref_selectedPiece.value.calcMovablePositions(board, movablePositions);
-// })
-const comp_movablePositions = ref<Position[]>([]);
-
-
-function updateFrame(newGrid: Grid, nextPlayer: EColor): void {
-  // ref_grid.value = newGrid;
-  ref_grid.value = newGrid;
-  ref_currentPlayer.value = nextPlayer;
-}
 onMounted(() => {
-  GameManager.instance.subscribe(updateFrame);
+  GameManager.instance.subscribe((newGrid: Grid, nextPlayer: EColor) => {
+    ref_grid.value = newGrid;
+    ref_currentPlayersColor.value = nextPlayer;
+  });
 });
-
 onUnmounted(() => {
 
 })
 
-function isMoveablePosition(x: number, y: number): boolean {
-  return comp_movablePositions.value.some((movablePosition) => movablePosition.isSame(new Position(x, y)));
-}
+// setter
+function setSelectedPiece(piece: Piece | null): void {
+  gameManager.selectedPiece = piece;
+  ref_selectedPiece.value = piece;
 
-function test(ref_selectedPiece: Piece | null): Position[] {
+}
+function setMovablePositions(ref_selectedPiece: Piece | null): void {
   if (ref_selectedPiece == null) {
-    return [];
-  }
-
-  console.count();
-  // debugger;
-  return ref_selectedPiece.calcMovablePositions(board);
-}
-
-function handleDragStart(x: number, y: number): void {
-  console.count();
-  const position = new Position(x, y);
-  const piece = board.getPieceAt(position);
-  if (piece == null || piece.color != ref_currentPlayer.value) {
-    debugger;
-    gameManager.selectedPiece = null;
+    ref_movablePositions.value = [];
     return;
   }
 
-  ref_selectedPiece.value = piece;
-  gameManager.selectedPiece = piece;
-  comp_movablePositions.value = test(piece);
-  console.log(comp_movablePositions.value)
+  ref_movablePositions.value = ref_selectedPiece.calcMovablePositions(board);
+}
+function clear(): void {
+  ref_selectedPiece.value = null;
+  ref_movablePositions.value = [];
 }
 
+// event handler
+function handleDragStart(x: number, y: number): void {
+  const piece = board.getPieceAt(new Position(x, y));
+
+  if (piece == null || ref_currentPlayersColor.value != piece.color) {
+    setSelectedPiece(null);
+    return;
+  }
+
+  setSelectedPiece(piece);
+  setMovablePositions(piece);
+}
 function handleDragOver(e: Event): void {
   e.preventDefault();
 }
-
 function handleDrop(x: number, y: number): void {
-  if (!isMoveablePosition(x, y)) {
-    clearState();
-    return;
+  if (isMoveablePosition(x, y)) {
+    gameManager.selectedPosition =  new Position(x, y);
+    gameManager.update();
   }
 
-  console.assert(ref_selectedPiece.value != null, { x, y });
-  gameManager.selectedPosition =  new Position(x, y);
-  gameManager.update();
-  clearState();
+  clear();
 }
 
-function clearState(): void {
-  ref_selectedPiece.value = null;
-  comp_movablePositions.value = []; // TODO: remove
+// helper
+function isMoveablePosition(x: number, y: number): boolean {
+  return ref_movablePositions.value.some((movablePosition) => movablePosition.isSame(new Position(x, y)));
 }
 </script>
 
