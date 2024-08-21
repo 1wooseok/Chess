@@ -5,9 +5,9 @@ import Knight from "../piece/knight/Knight";
 import Piece from "../piece/Piece";
 import Queen from "../piece/queen/Queen";
 import Rook from "../piece/rook/Rook";
-import Position from "../Position";
+import Position from "../chess/Position";
 import Pawn from "../piece/pawn/Pawn";
-import {Grid} from "./type";
+import {Grid} from "./Board.type";
 
 
 export default class Board {

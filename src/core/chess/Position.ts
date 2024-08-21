@@ -1,4 +1,3 @@
-// TODO: 그냥 x, y로만 하는게 더 나을지도?
 export default class Position {
     private _x: number;
     private _y: number;

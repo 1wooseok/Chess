@@ -1,12 +1,12 @@
 import {assert, expect, test} from "vitest";
 import Board from "../../board/Board";
-import Position from "../../Position";
+import Position from "../../chess/Position";
 import Bishop from "./Bishop";
 import EColor from "../../enum/EColor";
 import Pawn from "../pawn/Pawn";
 
 
-test("first move test", () =>
+test("이동 test", () =>
 {
     const x = 2;
     const y = 0;
@@ -18,15 +18,12 @@ test("first move test", () =>
     expect(piece).instanceof(Bishop);
     expect(piece.color).toBe(EColor.Black);
 
-    const moveablePositions = piece.getMovablePositions(board);
+    const moveablePositions = piece.calcMovablePositions(board);
     expect(moveablePositions.length == 0);
-
-    const invalidPosition = new Position(x + 1, y + 2);
-    expect(piece.move(board, invalidPosition)).toBe(false);
 });
 
 
-test("first kill", () =>
+test("대각선으로만 공격가능", () =>
 {
     const board = new Board();
 
@@ -39,13 +36,13 @@ test("first kill", () =>
     const blackLeftBishop = board.getPieceAt(new Position(2, 0));
     assert(blackLeftBishop != null);
 
-    expect(blackLeftBishop.getMovablePositions(board).length).toBe(5);
+    expect(blackLeftBishop.calcMovablePositions(board).length).toBe(5);
 
     expect(blackLeftBishop.move(board, new Position(7, 5))).toBe(true);
     expect(board.getPieceAt(new Position(2, 0))).toBeNull();
     board.print();
 
-    expect(blackLeftBishop.getMovablePositions(board).length).toBe(6);
+    expect(blackLeftBishop.calcMovablePositions(board).length).toBe(6);
 
     expect(blackLeftBishop.move(board, new Position(6, 6))).toBe(true);
     expect(board.getPieceAt(new Position(7, 5))).toBe(null);

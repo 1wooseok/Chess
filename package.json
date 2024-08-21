@@ -6,7 +6,7 @@
     "tsx": "cls && tsx src/web/main.ts",
     "lint": "npx eslint src/**",
     "dev": "npm run lint --fix && vite",
-    "build": "npm run lint --fix && tsc && vite build",
+    "build": "npm run lint --fix && npm run test && tsc && vite build",
     "test": "vitest"
   },
   "devDependencies": {

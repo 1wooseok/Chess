@@ -1,10 +1,11 @@
 import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
 import Board from "../board/Board";
-import {Grid} from "../board/type";
+import {Grid} from "../board/Board.type";
 import Piece from "../piece/Piece";
-import Position from "../Position";
+import Position from "./Position";
 
+// TODO:
 export type Observer = (grid: Grid, color: EColor) => void;
 
 export default class GameManager {
@@ -12,7 +13,7 @@ export default class GameManager {
     private readonly _board: Board = new Board();
     private _status: EGameStatus = EGameStatus.None;
     private _moveCount: number = 1;
-    // TODO: 이렇게 처리하는게 맞는건지 모르겠음
+    // TODO: selected를 저장하는게 맞는건지 모르겠음
     private _selectedPiece: Piece | null = null;
     private _selectedPosition: Position | null = null;
     private observers: Observer[] = [];
@@ -52,14 +53,12 @@ export default class GameManager {
     }
 
     update(): void {
-        console.assert(this._selectedPosition != null, { selectedPosition: this._selectedPosition });
-        console.assert(this._selectedPiece != null, { selectedPiece: this._selectedPiece });
+        if (this._selectedPiece == null || this._selectedPosition == null) {
+            debugger;
+            throw "이동할 체스말과 목적지가 제대로 선택되지 않음."
+        }
 
-        // const target = this._board.getPieceAt(this._selectedPosition!);
-        // if (target != null) {
-        //     this._deadPieces.push(target);
-        // }
-        this._selectedPiece!.move(this.board, this._selectedPosition!);
+        this._selectedPiece.move(this.board, this._selectedPosition);
         this.clearFrame();
     }
 

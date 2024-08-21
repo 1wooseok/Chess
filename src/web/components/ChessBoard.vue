@@ -30,8 +30,8 @@
 <script setup lang="ts">
 import {ref, onMounted, onUnmounted} from 'vue';
 import GameManager from "../../core/chess/GameManager";
-import {Grid} from "../../core/board/type";
-import Position from "../../core/Position";
+import {Grid} from "../../core/board/Board.type";
+import Position from "../../core/chess/Position";
 import Piece from "../../core/piece/Piece";
 import EColor from "../../core/enum/EColor";
 

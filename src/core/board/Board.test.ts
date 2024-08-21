@@ -1,16 +1,11 @@
 import { expect, test } from 'vitest';
 import Board from "./Board";
-import Position from "../Position";
+import Position from "../chess/Position";
 import EColor from "../enum/EColor";
 import Rook from "../piece/rook/Rook";
 import Pawn from "../piece/pawn/Pawn";
 
-test("print", () => {
-    const board = new Board();
-    board.print();
-});
-
-test("initial board state", () => {
+test("초기 상태", () => {
     const board: Board = new Board();
 
     // Rook

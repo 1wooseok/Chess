@@ -1,5 +1,5 @@
 import Board from "../board/Board";
-import Position from "../Position";
+import Position from "../chess/Position";
 import EColor from "../enum/EColor";
 
 export default abstract class Piece {
