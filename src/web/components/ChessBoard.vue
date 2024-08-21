@@ -37,13 +37,18 @@ const board = gameManager.board;
 const ref_grid = ref<Grid>(board.grid);
 const ref_currentPlayer = ref<EColor>(gameManager.currentPlayer);
 const ref_selectedPiece = ref<Piece | null>(null);
-const comp_movablePositions = computed<Position[]>(() => {
-  if (ref_selectedPiece.value == null) {
-    return [];
-  }
+// const comp_movablePositions = computed<Position[]>(() => {
+//   if (ref_selectedPiece.value == null) {
+//     return [];
+//   }
+//
+//   console.count();
+//   // debugger;
+//   const movablePositions = ref_selectedPiece.value.getMovablePositions(board);
+//   return ref_selectedPiece.value.calcMovablePositions(board, movablePositions);
+// })
+const comp_movablePositions = ref<Position[]>([]);
 
-  return ref_selectedPiece.value.getMovablePositions(board);
-})
 
 function updateFrame(newGrid: Grid, nextPlayer: EColor): void {
   // ref_grid.value = newGrid;
@@ -62,16 +67,30 @@ function isMoveablePosition(x: number, y: number): boolean {
   return comp_movablePositions.value.some((movablePosition) => movablePosition.isSame(new Position(x, y)));
 }
 
+function test(ref_selectedPiece: Piece | null): Position[] {
+  if (ref_selectedPiece == null) {
+    return [];
+  }
+
+  console.count();
+  // debugger;
+  return ref_selectedPiece.calcMovablePositions(board);
+}
+
 function handleDragStart(x: number, y: number): void {
+  console.count();
   const position = new Position(x, y);
   const piece = board.getPieceAt(position);
   if (piece == null || piece.color != ref_currentPlayer.value) {
+    debugger;
     gameManager.selectedPiece = null;
     return;
   }
 
   ref_selectedPiece.value = piece;
   gameManager.selectedPiece = piece;
+  comp_movablePositions.value = test(piece);
+  console.log(comp_movablePositions.value)
 }
 
 function handleDragOver(e: Event): void {
@@ -92,6 +111,7 @@ function handleDrop(x: number, y: number): void {
 
 function clearState(): void {
   ref_selectedPiece.value = null;
+  comp_movablePositions.value = []; // TODO: remove
 }
 </script>
 

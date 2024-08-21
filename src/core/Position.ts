@@ -27,4 +27,8 @@ export default class Position {
     isSame(other: Position): boolean {
         return this._x == other.x && this._y == other.y;
     }
+
+    copy(): Position {
+        return new Position(this._x, this._y);
+    }
 }

@@ -29,6 +29,17 @@ export default class Pawn extends Piece {
             }
         }
 
+        const attackablePositions = this.getAttackablePositions(board);
+
+        return movablePositions.concat(attackablePositions);
+    }
+
+    override getAttackablePositions(board: Board): Position[] {
+        const movablePositions: Position[] = [];
+        const x = super.position.x;
+        const y = super.position.y;
+        const dy = super.color == EColor.White ? -1 : 1;
+
         const diagonalLeft = new Position(x - 1, y + dy);
         if (board.isValidPosition(diagonalLeft)) {
             const piece = board.getPieceAt(diagonalLeft);

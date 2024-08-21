@@ -41,6 +41,24 @@ export default class Board {
         return 0 <= position.x && position.x < Board.SIZE && 0 <= position.y && position.y < Board.SIZE;
     }
 
+    findKing(color: EColor): Piece {
+        for (let y = 0; y < Board.SIZE; ++y) {
+            for (let x = 0; x < Board.SIZE; ++x) {
+                const piece = this.getPieceAt(new Position(x, y));
+
+                if (piece == null || piece.color != color) {
+                    continue;
+                }
+
+                if (piece instanceof King) {
+                    return piece;
+                }
+            }
+        }
+
+        throw "Unreachable code";
+    }
+
     private initBoard(): void {
         this._grid = [
             [
@@ -90,6 +108,7 @@ export default class Board {
         ];
     }
 
+    // TODO: 나중에 제거
     print(): void {
         const stringBuilder: string[] = [];
 
