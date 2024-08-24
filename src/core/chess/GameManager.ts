@@ -45,6 +45,7 @@ export default class GameManager {
     get moveCount(): number {
         return this._moveCount;
     }
+
     set selectedPiece(value: Piece | null) {
         this._selectedPiece = value;
     }
@@ -57,7 +58,6 @@ export default class GameManager {
         if (this._selectedPiece == null || this._selectedPosition == null) {
             throw "이동할 체스말과 목적지가 제대로 선택되지 않음.";
         }
-
         // move
         this._selectedPiece.move(this.board, this._selectedPosition);
 

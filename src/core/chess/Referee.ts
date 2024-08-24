@@ -18,27 +18,67 @@ export default class Referee {
     }
 
     calcGameStatus(board: Board, color: EColor): EGameStatus {
-        if (this.isCheckMate(board, color)) {
-            return EGameStatus.Checkmate;
-        } else if (this.isCheck(board, color)) {
+        const isCheck = this.isCheck(board, color);
+        if (isCheck) {
+            if (this.isCheckMate(board, color)) {
+                return EGameStatus.Checkmate;
+            }
+
             return EGameStatus.Check;
-        } else {
-            return EGameStatus.None;
         }
+
+        return EGameStatus.None;
     }
 
     isCheck(board: Board, color: EColor): boolean {
         const king = board.getKing(color);
-        const allPossibleAttackedPositions = this.getAllPossibleAttackedPositions(board, color);
+        const opponentsAttackablePositions = this.getOpponentsAttackablePositions(board, color);
 
-        return allPossibleAttackedPositions.some(p => king.position.isSame(p));
+        return opponentsAttackablePositions.some(p => king.position.isSame(p));
     }
 
     isCheckMate(board: Board, color: EColor): boolean {
-        return this.isCheck(board, color) && board.getKing(color).getMovableAndAttackablePositions(board).length == 0;
+        console.assert(this.isCheck(board, color));
+
+        const king = board.getKing(color);
+        // 1. 왕이 공격받지 않는 다른 칸으로 이동할 수 있는지 확인.
+        if (king.getMovableAndAttackablePositions(board).length > 0) {
+            return false;
+        }
+
+        for (let x = 0; x < Board.SIZE; ++x) {
+            for (let y = 0; y < Board.SIZE; ++y) {
+                const piece = board.getPieceAt(new Position(x, y));
+
+                // 2. 아군 말이 공격 경로 차단할 수 있는지 확인 && 아군 말이 공격자를 제거할 수 있는지 확인
+                if (piece != null && piece.color == color) {
+                    const mvs = piece.getMovableAndAttackablePositions(board);
+                    if (mvs.length > 0) {
+                        for (const mv of mvs) {
+                            let canEscapeCheck = false;
+                            const originalPiece = board.getPieceAt(mv);
+                            const returnPosition = piece.position.copy();
+
+                            piece.move(board, mv);
+                            if (king.getMovableAndAttackablePositions(board).length > 0) {
+                                canEscapeCheck = true;
+                            }
+                            piece.move(board, returnPosition);
+                            board.setPieceAt(mv, originalPiece);
+
+                            if (canEscapeCheck) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
-    private getAllPossibleAttackedPositions(board: Board, color: EColor): Position[] {
+    private getOpponentsAttackablePositions(board: Board, color: EColor): Position[] {
         const result: Position[] = [];
 
         for (let y = 0; y < Board.SIZE; ++y) {

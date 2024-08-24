@@ -57,7 +57,7 @@ export default abstract class Piece {
 
             this.simulateMove(board, legalPos);
             if (!referee.isCheck(board, this.color)) {
-                result.push(legalPos.copy());
+                result.push(legalPos);
             }
             this.simulateMove(board, myPosition);
             board.setPieceAt(legalPos, otherPiece);

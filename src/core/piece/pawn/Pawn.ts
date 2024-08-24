@@ -9,7 +9,6 @@ export default class Pawn extends Piece {
 
     constructor(position: Position, color: EColor) {
         super(position, color, color == EColor.White ? "♙" : "♟");
-
         this._isFirstMove = true;
     }
 
@@ -59,8 +58,6 @@ export default class Pawn extends Piece {
 
     override move(board: Board, nextPosition: Position): boolean {
         const success = super.move(board, nextPosition);
-        // FIXME: 실제로 안움직이고 내려놨을떄 버그 수정
-        //  시뮬레이션 움직임도 있기때문에, 그것때문에 first move가 깨지는 상황 발생.
         if (success) {
             this._isFirstMove = false;
         }
