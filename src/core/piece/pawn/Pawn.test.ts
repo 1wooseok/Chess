@@ -21,7 +21,7 @@ test("Pawn은 처음만 2칸 전진 가능", () =>
 
     const nextPosition = new Position(x, y + 2);
     expect(piece.move(board, nextPosition)).toBe(true);
-    expect(piece.position.isSame(nextPosition)).toBe(true);
+    expect(piece.position.equals(nextPosition)).toBe(true);
 
     board.test_print();
 });

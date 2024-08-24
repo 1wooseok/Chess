@@ -23,7 +23,7 @@ export default class Position {
         this._y = value;
     }
 
-    isSame(other: Position): boolean {
+    equals(other: Position): boolean {
         return this._x == other.x && this._y == other.y;
     }
 

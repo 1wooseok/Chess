@@ -19,5 +19,5 @@ test("Rook 이동 test", () => {
     const moveablePositions: Position[] = piece!.getMovableAndAttackablePositions(board);
     expect(moveablePositions).empty;
 
-    expect(piece.position.isSame(initialPosition)).toBeTruthy();
+    expect(piece.position.equals(initialPosition)).toBeTruthy();
 });

@@ -63,7 +63,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
         ];
         const actual = blackRightBishop.getMovableAndAttackablePositions(board);
         for (const e of expected) {
-            expect(actual.some(a => a.isSame(e))).toBe(true);
+            expect(actual.some(a => a.equals(e))).toBe(true);
         }
 
         blackRightBishop.move(board, new Position(1, 4));
@@ -79,6 +79,6 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
         const actual = whiteKing.getMovableAndAttackablePositions(board);
 
         const expected = new Position(4, 6);
-        expect(actual.every(a => a.isSame(expected))).toBe(true);
+        expect(actual.every(a => a.equals(expected))).toBe(true);
     }
 });

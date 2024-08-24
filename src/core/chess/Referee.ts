@@ -3,6 +3,7 @@ import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
 import Position from "./Position";
 
+// 규칙: https://www.chess.com/ko/article/view/how-chess-games-can-end-8-ways-explained-ko
 export default class Referee {
     private constructor() {
     }
@@ -34,7 +35,7 @@ export default class Referee {
         const king = board.getKing(color);
         const opponentsAttackablePositions = this.getOpponentsAttackablePositions(board, color);
 
-        return opponentsAttackablePositions.some(p => king.position.isSame(p));
+        return opponentsAttackablePositions.some(p => king.position.equals(p));
     }
 
     isCheckMate(board: Board, color: EColor): boolean {
@@ -98,34 +99,24 @@ export default class Referee {
         return result;
     }
 
-    // isDraw(): boolean {
-    // 1. 동의에 의한 무승부 (Draw by Agreement):
+    // ## 승/패
+    // 1. 체크메이트
+    // 1-1. 킹을 피하거나
+    // 1-2. 아군이 킹을 지키거나
+    // 1-3. 상대 기물을 잡을 수 없다면 체크메이트
+// TODO: 남은 기능
+    // 2. 기권
+    // 3. 시간패
 
-    // 2, 50수 규칙 (Fifty-Move Rule):
-    // 양쪽 플레이어가 연속으로 50수 동안 아무도 폰을 움직이지 않고, 상대의 기물을 잡지도 않은 경우
-    // 한쪽이 50수 규칙에 따라 무승부를 선언할 수 있습니다.
-
-    // 3. 삼중 반복 규칙 (Threefold Repetition Rule):
-    // 같은 보드 상태가 세 번 반복되면 한쪽 플레이어가 무승부를 요청할 수 있습니다.
-    // 차례, 기물의 위치, 움직임 가능성 등이 동일해야 함
-
-    // 4. 물리적 기물 부족 (Insufficient Material):
-    // 어느 쪽도 상대를 체크메이트할 수 있는 충분한 기물이 남아 있지 않을 경우 무승부가 선언됩니다.
-    // 예를 들어, 한쪽이 왕과 나이트만 남아 있고 상대방도 왕만 남아 있을 때는 체크메이트가 불가능하므로 게임은 무승부가 됩니다.
-
-    // 5. 서로 왕만 남은 경우 (King vs. King):
-    // 양쪽 플레이어의 기물이 모두 소멸되어 서로 왕만 남은 상황에서는 체크메이트가 불가능하기 때문에 자동으로 무승부가 선언됩니다.
-    // }
-
-    // isDrawByAgreement(): boolean {
-    // }
-    //
-    // isKingVsKing(): boolean {
-    // }
-    //
-    // isStaleMate(): boolean {
-    // }
-    //
-    // private isDrawAgreement(): boolean {
-    // }
+    // ## 무승부
+    // 1. 스테일메이트
+    // 체크가 아닌데도 움직일 말이 없는 경우
+    // 2. 기물 부족
+    // 2-1. 킹 vs 킹
+    // 2-2. (킹 + 부기물(= 나이트, 비숍)) vs 킹
+    // 2-3. 킹 vs 모든 기물 ( 제한시간 상관 없이 무승부 )
+    // 2-4. 킹 vs (킹 + 2나이트 )
+    // 3. 50수 규칙
+    // 4. 3중 반복
+    // 5. 합의
 }
