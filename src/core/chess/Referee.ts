@@ -40,10 +40,14 @@ export default class Referee {
 
     isCheckMate(board: Board, color: EColor): boolean {
         console.assert(this.isCheck(board, color));
+        // 아래 3개 다 못하면 체크메이트
+        // 1-1. 킹을 움직여서 피하거나
+        // 1-2. 아군이 킹을 지키거나
+        // 1-3. 킹을 위협하는 기물을 잡거나
 
         const king = board.getKing(color);
-        // 1. 왕이 공격받지 않는 다른 칸으로 이동할 수 있는지 확인.
-        if (king.getMovableAndAttackablePositions(board).length > 0) {
+        // 킹이 움직여서 피할수 있는지 확인
+        if (king.getMovableAndAttackableAndSafePositions(board).length > 0) {
             return false;
         }
 
@@ -51,9 +55,9 @@ export default class Referee {
             for (let y = 0; y < Board.SIZE; ++y) {
                 const piece = board.getPieceAt(new Position(x, y));
 
-                // 2. 아군 말이 공격 경로 차단할 수 있는지 확인 && 아군 말이 공격자를 제거할 수 있는지 확인
+                // 아군이 지킬 수 있는지 확인 && 아군이 공격기물 제거할 수 있는지 확인
                 if (piece != null && piece.color == color) {
-                    const mvs = piece.getMovableAndAttackablePositions(board);
+                    const mvs = piece.getMovableAndAttackableAndSafePositions(board);
                     if (mvs.length > 0) {
                         for (const mv of mvs) {
                             let canEscapeCheck = false;
@@ -61,7 +65,7 @@ export default class Referee {
                             const returnPosition = piece.position.copy();
 
                             piece.move(board, mv);
-                            if (king.getMovableAndAttackablePositions(board).length > 0) {
+                            if (king.getMovableAndAttackableAndSafePositions(board).length > 0) {
                                 canEscapeCheck = true;
                             }
                             piece.move(board, returnPosition);
@@ -99,11 +103,7 @@ export default class Referee {
         return result;
     }
 
-    // ## 승/패
-    // 1. 체크메이트
-    // 1-1. 킹을 피하거나
-    // 1-2. 아군이 킹을 지키거나
-    // 1-3. 상대 기물을 잡을 수 없다면 체크메이트
+
 // TODO: 남은 기능
     // 2. 기권
     // 3. 시간패

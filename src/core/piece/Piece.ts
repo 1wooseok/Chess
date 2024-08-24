@@ -36,14 +36,15 @@ export default abstract class Piece {
         return true;
     }
 
-    // FIXME: 꼭 필요할까?
-    //  이동가능한 위치 계산시 가상 움직임을 위해 사용. ( pawn은 한번 움직이면 그다음부터 이동이 바뀌기 때문에 )
     simulateMove(board: Board, nextPosition: Position): boolean {
         return this.move(board, nextPosition);
     }
 
-    getMovableAndAttackablePositions(board: Board): Position[] {
-        const result: Position[] = [];
+    // 단순히 기물별로 움직일 수 있는 위치 계산하는게 아니라
+    // 움직였을때 위험한 상황에 놓이는지까지 판단하고 있음.
+    // 함수가 여러가지 일을 하고있어서 좀 애매함
+    getMovableAndAttackableAndSafePositions(board: Board): Position[] {
+        const result: Position[] = []; // TODO: 중복제거 필요할까?
         const referee = Referee.instance;
         // 1. 이동 가능 위치 + 공격 가능 위치
         const movablePositions = this.getMovablePositions(board);

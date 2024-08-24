@@ -16,7 +16,7 @@ test("Pawn은 처음만 2칸 전진 가능", () =>
 
     expect(piece).instanceof(Pawn);
 
-    const moveablePositions = piece.getMovableAndAttackablePositions(board);
+    const moveablePositions = piece.getMovableAndAttackableAndSafePositions(board);
     expect(moveablePositions.length == 2);
 
     const nextPosition = new Position(x, y + 2);
@@ -52,7 +52,7 @@ test("Pawn은 대각선만 공격 가능", () =>
 
     board.test_print();
 
-    const whiteMovablePositions = whitePawn.getMovableAndAttackablePositions(board);
+    const whiteMovablePositions = whitePawn.getMovableAndAttackableAndSafePositions(board);
     expect(whiteMovablePositions.length).toBe(1);
 
     whitePawn.move(board, new Position(0, 3));

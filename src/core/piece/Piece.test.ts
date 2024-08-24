@@ -15,7 +15,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
             new Position(4, 5),
             new Position(4, 4),
         ];
-        expect(kingFrontWhitePawn?.getMovableAndAttackablePositions(board)).toEqual(expectedValue);
+        expect(kingFrontWhitePawn?.getMovableAndAttackableAndSafePositions(board)).toEqual(expectedValue);
         kingFrontWhitePawn?.move(board, new Position(4, 4));
         expect(board.getPieceAt(new Position(4, 6))).toBe(null);
         expect(board.getPieceAt(new Position(4, 4))).toEqual(kingFrontWhitePawn);
@@ -28,7 +28,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
             new Position(4, 2),
             new Position(4, 3),
         ];
-        expect(kingFrontBlackPawn?.getMovableAndAttackablePositions(board)).toEqual(expectedValue);
+        expect(kingFrontBlackPawn?.getMovableAndAttackableAndSafePositions(board)).toEqual(expectedValue);
 
         kingFrontBlackPawn?.move(board, new Position(4, 3));
         expect(board.getPieceAt(new Position(4, 1))).toBe(null);
@@ -43,7 +43,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
             new Position(3, 5),
             new Position(3, 4),
         ];
-        expect(queenFrontWhitePawn?.getMovableAndAttackablePositions(board)).toEqual(expected);
+        expect(queenFrontWhitePawn?.getMovableAndAttackableAndSafePositions(board)).toEqual(expected);
         queenFrontWhitePawn?.move(board, new Position(3, 5));
         expect(board.getPieceAt(new Position(3, 6))).toBe(null);
         expect(board.getPieceAt(new Position(3, 5))).toEqual(queenFrontWhitePawn);
@@ -61,7 +61,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
             new Position(1, 4),
             new Position(0, 5),
         ];
-        const actual = blackRightBishop.getMovableAndAttackablePositions(board);
+        const actual = blackRightBishop.getMovableAndAttackableAndSafePositions(board);
         for (const e of expected) {
             expect(actual.some(a => a.equals(e))).toBe(true);
         }
@@ -76,7 +76,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
     {
         const whiteKing = board.getKing(EColor.White);
         assert(whiteKing instanceof King);
-        const actual = whiteKing.getMovableAndAttackablePositions(board);
+        const actual = whiteKing.getMovableAndAttackableAndSafePositions(board);
 
         const expected = new Position(4, 6);
         expect(actual.every(a => a.equals(expected))).toBe(true);

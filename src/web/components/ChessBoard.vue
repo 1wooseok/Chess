@@ -79,7 +79,7 @@ function setMovablePositions(ref_selectedPiece: Piece | null): void {
     return;
   }
 
-  ref_movablePositions.value = ref_selectedPiece.getMovableAndAttackablePositions(board);
+  ref_movablePositions.value = ref_selectedPiece.getMovableAndAttackableAndSafePositions(board);
 }
 function clear(): void {
   ref_selectedPiece.value = null;

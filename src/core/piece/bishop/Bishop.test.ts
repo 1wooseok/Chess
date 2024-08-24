@@ -18,7 +18,7 @@ test("이동 test", () =>
     expect(piece).instanceof(Bishop);
     expect(piece.color).toBe(EColor.Black);
 
-    const moveablePositions = piece.getMovableAndAttackablePositions(board);
+    const moveablePositions = piece.getMovableAndAttackableAndSafePositions(board);
     expect(moveablePositions.length == 0);
 });
 
