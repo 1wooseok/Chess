@@ -113,7 +113,7 @@ function handleDrop(x: number, y: number): void {
 
 // helper
 function isMoveablePosition(x: number, y: number): boolean {
-  return ref_movablePositions.value.some((movablePosition) => movablePosition.isSame(new Position(x, y)));
+  return ref_movablePositions.value.some((movablePosition) => movablePosition.equals(new Position(x, y)));
 }
 </script>
 
