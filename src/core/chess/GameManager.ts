@@ -4,9 +4,10 @@ import Board from "../board/Board";
 import {Grid} from "../board/Board.type";
 import Piece from "../piece/Piece";
 import Position from "./Position";
+import Referee from "./Referee";
 
 // TODO:
-export type Observer = (grid: Grid, color: EColor) => void;
+export type Observer = (grid: Grid, color: EColor, gameStatus: EGameStatus) => void;
 
 export default class GameManager {
     private static _instance: GameManager | null = null;
@@ -54,12 +55,23 @@ export default class GameManager {
 
     update(): void {
         if (this._selectedPiece == null || this._selectedPosition == null) {
-            debugger;
-            throw "이동할 체스말과 목적지가 제대로 선택되지 않음."
+            throw "이동할 체스말과 목적지가 제대로 선택되지 않음.";
         }
 
+        // move
         this._selectedPiece.move(this.board, this._selectedPosition);
-        this.clearFrame();
+
+        // update status
+        const opponent = this.currentPlayer == EColor.White ? EColor.Black : EColor.White;
+        this._status = Referee.instance.calcGameStatus(this._board, opponent);
+
+        // clear
+        ++this._moveCount;
+        this._selectedPiece = null;
+        this._selectedPosition = null;
+
+        // pub/sub
+        this.notifyChange();
     }
 
     subscribe(observer: Observer): void {
@@ -68,15 +80,7 @@ export default class GameManager {
 
     private notifyChange(): void {
         for (const observer of this.observers) {
-            observer(this.board.grid, this.currentPlayer);
+            observer(this.board.grid, this.currentPlayer, this._status);
         }
     }
-
-    private clearFrame(): void {
-        ++this._moveCount;
-        this._selectedPiece = null;
-        this._selectedPosition = null;
-        this.notifyChange();
-    }
-
 }

@@ -3,6 +3,10 @@
     <h2>CurrentPlayer: {{ EColor[ref_currentPlayersColor] }}</h2>
   </div>
 
+  <div>
+    <h2>Status: {{ ref_gameStatus == EGameStatus.None ? "-" : EGameStatus[ref_gameStatus] }}</h2>
+  </div>
+
   <div class="board">
     <div v-for="(row, y) in ref_grid" :key="y" class="row">
       <div
@@ -19,7 +23,12 @@
           @drop="handleDrop(x, y)"
           :draggable="piece?.color == ref_currentPlayersColor"
       >
-        <div>
+        <div
+            :class="{
+              'disabled': piece != null && ref_currentPlayersColor != piece.color,
+              'able': piece != null && ref_currentPlayersColor == piece.color
+            }"
+        >
           {{ piece?.symbol }}
         </div>
       </div>
@@ -28,12 +37,13 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted} from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import GameManager from "../../core/chess/GameManager";
 import {Grid} from "../../core/board/Board.type";
 import Position from "../../core/chess/Position";
 import Piece from "../../core/piece/Piece";
 import EColor from "../../core/enum/EColor";
+import EGameStatus from "../../core/enum/EGameStatus";
 
 const gameManager = GameManager.instance;
 const board = gameManager.board;
@@ -43,12 +53,14 @@ const ref_grid = ref<Grid>(board.grid);
 const ref_selectedPiece = ref<Piece | null>(null);
 const ref_movablePositions = ref<Position[]>([]);
 const ref_currentPlayersColor = ref<EColor>(gameManager.currentPlayer);
+const ref_gameStatus = ref<EGameStatus>(gameManager.status);
 
 //
 onMounted(() => {
-  GameManager.instance.subscribe((newGrid: Grid, nextPlayer: EColor) => {
+  GameManager.instance.subscribe((newGrid: Grid, nextPlayer: EColor, nextGameStatus: EGameStatus) => {
     ref_grid.value = newGrid;
     ref_currentPlayersColor.value = nextPlayer;
+    ref_gameStatus.value = nextGameStatus;
   });
 });
 onUnmounted(() => {
@@ -67,7 +79,7 @@ function setMovablePositions(ref_selectedPiece: Piece | null): void {
     return;
   }
 
-  ref_movablePositions.value = ref_selectedPiece.calcMovablePositions(board);
+  ref_movablePositions.value = ref_selectedPiece.getMovableAndAttackablePositions(board);
 }
 function clear(): void {
   ref_selectedPiece.value = null;
@@ -83,6 +95,7 @@ function handleDragStart(x: number, y: number): void {
     return;
   }
 
+  // debugger;
   setSelectedPiece(piece);
   setMovablePositions(piece);
 }
@@ -144,5 +157,13 @@ function isMoveablePosition(x: number, y: number): boolean {
   background-color: red;
 
   border: 1px dashed white;
+}
+
+.disabled:hover {
+  cursor: not-allowed;
+}
+
+.able:hover {
+  cursor: grab;
 }
 </style>

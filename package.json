@@ -5,9 +5,10 @@
   "scripts": {
     "tsx": "cls && tsx src/web/main.ts",
     "lint": "npx eslint src/**",
-    "dev": "npm run lint --fix && vite",
+    "dev": "npm run lint --fix && npm run type-check && vite",
     "build": "npm run lint --fix && npm run test && tsc && vite build",
-    "test": "vitest"
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@eslint/js": "^9.7.0",

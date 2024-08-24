@@ -9,17 +9,21 @@ export default class King extends Piece {
     }
 
     override getMovablePositions(board: Board): Position[] {
+        const p = super.position;
+        const x = p.x;
+        const y = p.y;
+
         const deltas: Position[] = [
-            new Position(0, 1),
-            new Position(0, -1),
-            new Position(1, 0),
-            new Position(1, 1),
-            new Position(1, -1),
-            new Position(-1,0),
-            new Position(-1,1),
-            new Position(-1,-1),
+            new Position(x + 0, y + 1),
+            new Position(x + 1, y + 1),
+            new Position(x + 1, y + 0),
+            new Position(x + 1, y - 1),
+            new Position(x + 0, y - 1),
+            new Position(x - 1, y - 1),
+            new Position(x - 1, y + 0),
+            new Position(x - 1, y + 1),
         ];
 
-        return deltas.filter(p => board.isValidPosition(p));
+        return deltas.filter(p => board.isValidPosition(p) && board.getPieceAt(p)?.color != super.color);
     }
 } 

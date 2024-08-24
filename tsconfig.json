@@ -33,5 +33,8 @@
       "vitest/importMeta"
     ]
   },
-  "include": ["src"],
+  // FIXME: vue3의 경우 `vue-tsc`를 사용해야 하기때문에 일단 임시로 이렇게
+  "include": [
+    "src/core"
+  ]
 }

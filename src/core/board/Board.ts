@@ -12,54 +12,9 @@ import {Grid} from "./Board.type";
 
 export default class Board {
     static readonly SIZE = 8;
-    private _grid: Grid;
+    private readonly _grid: Grid;
 
     constructor() {
-        this._grid = new Array(Board.SIZE);
-        this.initBoard();
-    }
-
-    get grid(): Grid {
-        return this._grid;
-    }
-
-    getPieceAt(position: Position): Piece | null {
-        if (!this.isValidPosition(position)) {
-            throw `[VALIDATION ERROR]: ${position}`;
-        }
-
-        return this._grid[position.y][position.x];
-    }
-
-    setPieceAt( position: Position, piece: Piece | null): void {
-        this._grid[position.y][position.x] = piece;
-    }
-
-    isValidPosition(position: Position): boolean {
-        console.assert(position != null);
-
-        return 0 <= position.x && position.x < Board.SIZE && 0 <= position.y && position.y < Board.SIZE;
-    }
-
-    findKing(color: EColor): Piece {
-        for (let y = 0; y < Board.SIZE; ++y) {
-            for (let x = 0; x < Board.SIZE; ++x) {
-                const piece = this.getPieceAt(new Position(x, y));
-
-                if (piece == null || piece.color != color) {
-                    continue;
-                }
-
-                if (piece instanceof King) {
-                    return piece;
-                }
-            }
-        }
-
-        throw "Unreachable code";
-    }
-
-    private initBoard(): void {
         this._grid = [
             [
                 new Rook(new Position(0, 0), EColor.Black),
@@ -108,21 +63,54 @@ export default class Board {
         ];
     }
 
-    // TODO: 나중에 제거
-    print(): void {
-        const stringBuilder: string[] = [];
+    get grid(): Grid {
+        return this._grid;
+    }
+
+    getPieceAt(position: Position): Piece | null {
+        if (!this.isValidPosition(position)) {
+            throw `[VALIDATION ERROR]: ${position}`;
+        }
+
+        return this._grid[position.y][position.x];
+    }
+
+    setPieceAt(position: Position, piece: Piece | null): void {
+        this._grid[position.y][position.x] = piece;
+    }
+
+    isValidPosition(position: Position): boolean {
+        console.assert(position != null);
+
+        return 0 <= position.x && position.x < Board.SIZE && 0 <= position.y && position.y < Board.SIZE;
+    }
+
+    getKing(color: EColor): Piece {
+        for (let y = 0; y < Board.SIZE; ++y) {
+            for (let x = 0; x < Board.SIZE; ++x) {
+                const piece = this.getPieceAt(new Position(x, y));
+                if (piece instanceof King && piece.color == color) {
+                    return piece;
+                }
+            }
+        }
+
+        throw "Unreachable code";
+    }
+
+    test_print(): void {
+        const s: string[] = [];
 
         for (let y = 0; y < this._grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; ++x) {
-                stringBuilder.push('|');
+                s.push('|');
 
                 const p = this.getPieceAt(new Position(x, y));
-                stringBuilder.push(p == null ? ' ' : p.symbol);
+                s.push(p == null ? '  ' : p.symbol);
             }
-            stringBuilder.push('|');
-            stringBuilder.push('\n');
+            s.push('|\n');
         }
 
-        console.log(stringBuilder.join(""));
+        console.log(s.join(""));
     }
 }

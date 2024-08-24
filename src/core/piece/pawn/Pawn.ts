@@ -14,28 +14,26 @@ export default class Pawn extends Piece {
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const movablePositions: Position[] = [];
+        const result: Position[] = [];
         const x = super.position.x;
         const y = super.position.y;
         const dy = super.color == EColor.White ? -1 : 1;
-
         const forward = new Position(x, y + dy);
-        if (board.isValidPosition(forward) && board.getPieceAt(forward) == null) {
-            movablePositions.push(forward);
 
-            const doubleForward = new Position(x, y + 2 * dy);
+        if (board.isValidPosition(forward) && board.getPieceAt(forward) == null) {
+            result.push(forward);
+
+            const doubleForward = new Position(x, y + (2 * dy));
             if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceAt(doubleForward) == null) {
-                movablePositions.push(doubleForward);
+                result.push(doubleForward);
             }
         }
 
-        const attackablePositions = this.getAttackablePositions(board);
-
-        return movablePositions.concat(attackablePositions);
+        return result;
     }
 
     override getAttackablePositions(board: Board): Position[] {
-        const movablePositions: Position[] = [];
+        const result: Position[] = [];
         const x = super.position.x;
         const y = super.position.y;
         const dy = super.color == EColor.White ? -1 : 1;
@@ -44,7 +42,7 @@ export default class Pawn extends Piece {
         if (board.isValidPosition(diagonalLeft)) {
             const piece = board.getPieceAt(diagonalLeft);
             if (piece != null && piece.color != super.color) {
-                movablePositions.push(diagonalLeft);
+                result.push(diagonalLeft);
             }
         }
 
@@ -52,13 +50,12 @@ export default class Pawn extends Piece {
         if (board.isValidPosition(diagonalRight)) {
             const piece = board.getPieceAt(diagonalRight);
             if (piece != null && piece.color != super.color) {
-                movablePositions.push(diagonalRight);
+                result.push(diagonalRight);
             }
         }
 
-        return movablePositions;
+        return result;
     }
-
 
     override move(board: Board, nextPosition: Position): boolean {
         const success = super.move(board, nextPosition);

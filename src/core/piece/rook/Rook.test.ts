@@ -16,7 +16,7 @@ test("Rook 이동 test", () => {
 
     expect(piece).instanceof(Rook);
 
-    const moveablePositions: Position[] = piece!.calcMovablePositions(board);
+    const moveablePositions: Position[] = piece!.getMovableAndAttackablePositions(board);
     expect(moveablePositions).empty;
 
     expect(piece.position.isSame(initialPosition)).toBeTruthy();
