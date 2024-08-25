@@ -47,6 +47,10 @@ export abstract class Piece {
         return this.move(board, nextPosition);
     }
 
+    getAttackablePositions(board: Board): Position[] {
+        return this.getMovablePositions(board);
+    }
+
     // 단순히 기물별로 움직일 수 있는 위치 계산하는게 아니라
     // 움직였을때 위험한 상황에 놓이는지까지 판단하고 있음.
     // 함수가 여러가지 일을 하고있어서 좀 애매함
@@ -75,10 +79,6 @@ export abstract class Piece {
     }
 
     protected abstract getMovablePositions(board: Board): Position[];
-
-    getAttackablePositions(board: Board): Position[] {
-        return this.getMovablePositions(board);
-    }
 
     protected traverseDirection(board: Board, dx: number, dy: number): Position[] {
         const result: Position[] = [];

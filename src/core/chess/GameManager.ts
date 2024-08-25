@@ -9,20 +9,11 @@ import Referee from "./Referee";
 // TODO:
 export type Observer = (grid: Grid, color: EColor, gameStatus: EGameStatus) => void;
 
+// Singleton
 export default class GameManager {
     private static _instance: GameManager | null = null;
-    private readonly _board: Board = new Board();
-    private _status: EGameStatus = EGameStatus.None;
-    private _moveCount: number = 1;
-    // TODO: selected를 저장하는게 맞는건지 모르겠음
-    private _selectedPiece: Piece | null = null;
-    private _selectedPosition: Position | null = null;
-    private observers: Observer[] = [];
-    private readonly _deadPieces: Piece[] = [];
-
     private constructor() {
     }
-
     static get instance(): GameManager {
         if (GameManager._instance == null) {
             GameManager._instance = new GameManager();
@@ -30,6 +21,15 @@ export default class GameManager {
 
         return GameManager._instance;
     }
+
+    private readonly _board: Board = new Board();
+    private _status: EGameStatus = EGameStatus.None;
+    private _moveCount: number = 1;
+    // TODO: selected를 저장하는게 맞는건지 모르겠음
+    private _selectedPiece: Piece | null = null;
+    private _selectedPosition: Position | null = null;
+    private readonly observers: Observer[] = [];
+    private readonly _deadPieces: Piece[] = [];
 
     get board(): Board {
         return this._board;
@@ -47,6 +47,10 @@ export default class GameManager {
         return this._moveCount;
     }
 
+    get deadPieces(): Piece[] {
+        return this._deadPieces;
+    }
+
     set selectedPiece(value: Piece | null) {
         this._selectedPiece = value;
     }
@@ -56,21 +60,18 @@ export default class GameManager {
     }
 
     update(): void {
-        if (this._selectedPiece == null || this._selectedPosition == null) {
-            throw "이동할 체스말과 목적지가 제대로 선택되지 않음.";
-        }
         // move
-        const target = this._board.getPieceAt(this._selectedPosition);
+        const target = this._board.getPieceAt(this._selectedPosition!);
         if (target != null) {
             this._deadPieces.push(target);
         }
-        this._selectedPiece.move(this._board, this._selectedPosition);
+        this._selectedPiece!.move(this._board, this._selectedPosition!);
 
-        // update status
+        // update game status
         const opponent = this.currentPlayer == EColor.White ? EColor.Black : EColor.White;
         this._status = this.calcGameStatus(this._board, opponent);
 
-        // clear
+        // cleanup
         this._selectedPiece = null;
         this._selectedPosition = null;
         ++this._moveCount;
@@ -82,18 +83,12 @@ export default class GameManager {
     private calcGameStatus(board: Board, color: EColor): EGameStatus {
         const referee = Referee.instance;
 
-        const isStalemate = referee.isStalemate(board, color);
-        if (isStalemate) {
+        if (referee.isStalemate(board, color) || referee.isLackOfPiece(board)) {
             return EGameStatus.Draw;
         }
 
-        const isCheck = referee.isCheck(board, color);
-        if (isCheck) {
-            if (referee.isCheckmate(board, color)) {
-                return EGameStatus.Checkmate;
-            }
-
-            return EGameStatus.Check;
+        if (referee.isCheck(board, color)) {
+            return referee.isCheckmate(board, color) ? EGameStatus.Checkmate : EGameStatus.Check;
         }
 
         return EGameStatus.None;

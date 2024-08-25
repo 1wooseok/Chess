@@ -4,12 +4,11 @@ import Position from "./Position";
 import EClassification from "../enum/EClassification";
 import {Pawn} from "../piece/internal";
 
+// Singleton
 export default class Referee {
+    private static _instance: Referee | null = null;
     private constructor() {
     }
-
-    private static _instance: Referee | null = null;
-
     static get instance(): Referee {
         if (this._instance == null) {
             this._instance = new Referee();
@@ -38,7 +37,7 @@ export default class Referee {
             for (let y = 0; y < Board.SIZE; ++y) {
                 const piece = board.getPieceAt(new Position(x, y));
 
-                // 아군이 지킬 수 있는지 확인 && 아군이 공격기물 제거할 수 있는지 확인
+                // 아군이 왕을 지킬 수 있는지 && 공격 기물 제거할 수 있는지 확인
                 if (piece != null && piece.color == color) {
                     const mvs = piece.getMovableAndAttackableAndSafePositions(board);
                     if (mvs.length > 0) {
@@ -47,11 +46,11 @@ export default class Referee {
                             const originalPiece = board.getPieceAt(mv);
                             const returnPosition = piece.position.copy();
 
-                            piece.move(board, mv);
+                            piece.simulateMove(board, mv);
                             if (king.getMovableAndAttackableAndSafePositions(board).length > 0) {
                                 canEscapeCheck = true;
                             }
-                            piece.move(board, returnPosition);
+                            piece.simulateMove(board, returnPosition);
                             board.setPieceAt(mv, originalPiece);
 
                             if (canEscapeCheck) {
@@ -106,7 +105,6 @@ export default class Referee {
         return !this.isCheck(board, color) && this.getAllMovableAndAttackableAndSafePositions(board, color).length == 0;
     }
 
-    // FIXME: 이렇게 간단하게 해도 되는건지
     isLackOfPiece(board: Board): boolean {
         for (let y = 0; y < Board.SIZE; ++y) {
             for (let x = 0; x < Board.SIZE; ++x) {

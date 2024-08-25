@@ -63,13 +63,17 @@ export default class Board {
 
     getPieceAt(position: Position): Piece | null {
         if (!this.isValidPosition(position)) {
-            throw `[VALIDATION ERROR]: ${position}`;
+            throw `Invalid position: ${position}`;
         }
 
         return this._grid[position.y][position.x];
     }
 
     setPieceAt(position: Position, piece: Piece | null): void {
+        if (!this.isValidPosition(position)) {
+            throw `Invalid position: ${position}`;
+        }
+
         this._grid[position.y][position.x] = piece;
     }
 
