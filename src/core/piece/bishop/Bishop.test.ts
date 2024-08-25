@@ -1,9 +1,8 @@
 import {assert, expect, test} from "vitest";
 import Board from "../../board/Board";
 import Position from "../../chess/Position";
-import Bishop from "./Bishop";
+import {Bishop, Pawn} from "../internal";
 import EColor from "../../enum/EColor";
-import Pawn from "../pawn/Pawn";
 
 
 test("이동 test", () =>

@@ -1,12 +1,9 @@
 import {assert, describe, expect, test} from "vitest";
 import Board from "../board/Board";
-import King from "../piece/king/King";
+import {King, Pawn, Queen, Rook} from "../piece/internal";
 import Position from "./Position";
 import EColor from "../enum/EColor";
-import Queen from "../piece/queen/Queen";
 import Referee from "./Referee";
-import Pawn from "../piece/pawn/Pawn";
-import Rook from "../piece/rook/Rook";
 
 describe("stalemate test", () => {
     const referee = Referee.instance;
@@ -75,4 +72,8 @@ describe("stalemate test", () => {
 
         expect(referee.isStalemate(board, EColor.White)).toBe(true);
     });
+});
+
+describe("기물이 불충분한 경우 무승부 판정", () => {
+
 });

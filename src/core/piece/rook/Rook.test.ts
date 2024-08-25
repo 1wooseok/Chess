@@ -1,8 +1,7 @@
 import {assert, expect, test} from "vitest";
 import Board from "../../board/Board";
 import Position from "../../chess/Position";
-import Piece from "../Piece";
-import Rook from "./Rook";
+import {Piece, Rook} from "../internal";
 
 test("Rook 이동 test", () => {
     const board: Board = new Board();

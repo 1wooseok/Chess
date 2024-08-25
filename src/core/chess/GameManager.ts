@@ -2,7 +2,7 @@ import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
 import Board from "../board/Board";
 import {Grid} from "../board/Board.type";
-import Piece from "../piece/Piece";
+import {Piece} from "../piece/internal";
 import Position from "./Position";
 import Referee from "./Referee";
 
@@ -18,6 +18,7 @@ export default class GameManager {
     private _selectedPiece: Piece | null = null;
     private _selectedPosition: Position | null = null;
     private observers: Observer[] = [];
+    private readonly _deadPieces: Piece[] = [];
 
     private constructor() {
     }
@@ -59,7 +60,11 @@ export default class GameManager {
             throw "이동할 체스말과 목적지가 제대로 선택되지 않음.";
         }
         // move
-        this._selectedPiece.move(this.board, this._selectedPosition);
+        const target = this._board.getPieceAt(this._selectedPosition);
+        if (target != null) {
+            this._deadPieces.push(target);
+        }
+        this._selectedPiece.move(this._board, this._selectedPosition);
 
         // update status
         const opponent = this.currentPlayer == EColor.White ? EColor.Black : EColor.White;

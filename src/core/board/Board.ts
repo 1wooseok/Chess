@@ -1,12 +1,6 @@
 import EColor from "../enum/EColor";
-import Bishop from "../piece/bishop/Bishop";
-import King from "../piece/king/King";
-import Knight from "../piece/knight/Knight";
-import Piece from "../piece/Piece";
-import Queen from "../piece/queen/Queen";
-import Rook from "../piece/rook/Rook";
+import {Bishop, King, Knight, Pawn, Piece, Queen, Rook} from "../piece/internal";
 import Position from "../chess/Position";
-import Pawn from "../piece/pawn/Pawn";
 import {Grid} from "./Board.type";
 
 

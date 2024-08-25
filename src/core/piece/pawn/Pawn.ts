@@ -1,14 +1,15 @@
 import Board from "../../board/Board";
 import Position from "../../chess/Position";
 import EColor from "../../enum/EColor";
-import Piece from "../Piece";
+import {Piece} from "../internal";
+import EClassification from "../../enum/EClassification";
 
 
-export default class Pawn extends Piece {
+export class Pawn extends Piece {
     private _isFirstMove: boolean;
 
     constructor(position: Position, color: EColor) {
-        super(position, color, color == EColor.White ? "♙" : "♟");
+        super(position, color, color == EColor.White ? "♙" : "♟", EClassification.None);
         this._isFirstMove = true;
     }
 

@@ -1,29 +1,28 @@
 import Board from "../../board/Board";
 import Position from "../../chess/Position";
 import EColor from "../../enum/EColor";
-import Piece from "../Piece";
+import {Piece} from "../internal";
+import EClassification from "../../enum/EClassification";
 
-export default class King extends Piece {
+export class King extends Piece {
     constructor(position: Position, color: EColor) {
-        super(position, color, color == EColor.White ? "♔" : "♚");
+        super(position, color, color == EColor.White ? "♔" : "♚", EClassification.None);
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const p = super.position;
-        const x = p.x;
-        const y = p.y;
+        const curr = super.position;
 
-        const deltas: Position[] = [
-            new Position(x + 0, y + 1),
-            new Position(x + 1, y + 1),
-            new Position(x + 1, y + 0),
-            new Position(x + 1, y - 1),
-            new Position(x + 0, y - 1),
-            new Position(x - 1, y - 1),
-            new Position(x - 1, y + 0),
-            new Position(x - 1, y + 1),
+        const positions: Position[] = [
+            new Position(curr.x, curr.y + 1),
+            new Position(curr.x + 1, curr.y + 1),
+            new Position(curr.x + 1, curr.y),
+            new Position(curr.x + 1, curr.y - 1),
+            new Position(curr.x, curr.y - 1),
+            new Position(curr.x - 1, curr.y - 1),
+            new Position(curr.x - 1, curr.y),
+            new Position(curr.x - 1, curr.y + 1),
         ];
 
-        return deltas.filter(p => board.isValidPosition(p) && board.getPieceAt(p)?.color != super.color);
+        return positions.filter(p => board.isValidPosition(p) && board.getPieceAt(p)?.color != super.color);
     }
 } 

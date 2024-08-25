@@ -1,9 +1,8 @@
-import { expect, test } from 'vitest';
+import {expect, test} from 'vitest';
 import Board from "./Board";
 import Position from "../chess/Position";
 import EColor from "../enum/EColor";
-import Rook from "../piece/rook/Rook";
-import Pawn from "../piece/pawn/Pawn";
+import {Pawn, Rook} from "../piece/internal";
 
 test("초기 상태", () => {
     const board: Board = new Board();

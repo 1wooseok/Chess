@@ -1,9 +1,8 @@
 import {assert, expect, test} from "vitest";
 import Position from "../chess/Position";
 import Board from "../board/Board";
-import Bishop from "./bishop/Bishop";
+import {Bishop, King} from "../piece/internal";
 import EColor from "../enum/EColor";
-import King from "./king/King";
 
 test("체스말이 이동 가능한 위치 확인 테스트", () => {
     const board = new Board();

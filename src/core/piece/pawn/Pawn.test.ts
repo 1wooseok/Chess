@@ -1,7 +1,7 @@
 import {assert, expect, test} from "vitest";
 import Board from "../../board/Board";
 import Position from "../../chess/Position";
-import Pawn from "./Pawn";
+import {Pawn} from "../internal";
 import EColor from "../../enum/EColor";
 
 

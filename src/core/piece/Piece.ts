@@ -2,16 +2,19 @@ import Board from "../board/Board";
 import Position from "../chess/Position";
 import EColor from "../enum/EColor";
 import Referee from "../chess/Referee";
+import EClassification from "../enum/EClassification";
 
-export default abstract class Piece {
+export abstract class Piece {
+    private readonly _position: Position;
     private readonly _color: EColor;
     private readonly _symbol: string;
-    private readonly _position: Position;
+    private readonly _classification: EClassification;
 
-    protected constructor(position: Position, color: EColor, symbol: string) {
+    protected constructor(position: Position, color: EColor, symbol: string, classification: EClassification) {
+        this._position = position;
         this._color = color;
         this._symbol = symbol;
-        this._position = position;
+        this._classification = classification;
     }
 
     get color(): EColor {
@@ -24,6 +27,10 @@ export default abstract class Piece {
 
     get position(): Position {
         return this._position;
+    }
+
+    get classification(): EClassification {
+        return this._classification;
     }
 
     move(board: Board, nextPosition: Position): boolean {

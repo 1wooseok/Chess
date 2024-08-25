@@ -41,7 +41,7 @@ import {onMounted, onUnmounted, ref} from 'vue';
 import GameManager from "../../core/chess/GameManager";
 import {Grid} from "../../core/board/Board.type";
 import Position from "../../core/chess/Position";
-import Piece from "../../core/piece/Piece";
+import {Piece} from "../../core/piece/internal";
 import EColor from "../../core/enum/EColor";
 import EGameStatus from "../../core/enum/EGameStatus";
 
