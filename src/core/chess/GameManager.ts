@@ -76,9 +76,15 @@ export default class GameManager {
 
     private calcGameStatus(board: Board, color: EColor): EGameStatus {
         const referee = Referee.instance;
+
+        const isStalemate = referee.isStalemate(board, color);
+        if (isStalemate) {
+            return EGameStatus.Draw;
+        }
+
         const isCheck = referee.isCheck(board, color);
         if (isCheck) {
-            if (referee.isCheckMate(board, color)) {
+            if (referee.isCheckmate(board, color)) {
                 return EGameStatus.Checkmate;
             }
 

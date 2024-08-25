@@ -24,7 +24,7 @@ export default class Referee {
         return opponentsAttackablePositions.some(p => king.position.equals(p));
     }
 
-    isCheckMate(board: Board, color: EColor): boolean {
+    isCheckmate(board: Board, color: EColor): boolean {
         console.assert(this.isCheck(board, color));
 
         const king = board.getKing(color);
@@ -100,7 +100,7 @@ export default class Referee {
         return result;
     }
 
-    isStaleMate(board: Board, color: EColor): boolean {
+    isStalemate(board: Board, color: EColor): boolean {
         return !this.isCheck(board, color) && this.getAllMovableAndAttackableAndSafePositions(board, color).length == 0;
     }
 }

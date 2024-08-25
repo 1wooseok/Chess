@@ -23,7 +23,7 @@ describe("stalemate test", () => {
         board.setPieceAt(whiteKing.position, whiteKing);
 
 
-        expect(referee.isStaleMate(board, blackKing.color)).toBe(true);
+        expect(referee.isStalemate(board, blackKing.color)).toBe(true);
     });
 
     test("2", () => {
@@ -37,14 +37,14 @@ describe("stalemate test", () => {
         board.setPieceAt(blackPawn.position, blackPawn);
         board.setPieceAt(blackKing.position, blackKing);
 
-        expect(referee.isStaleMate(board, EColor.White)).toBe(false);
+        expect(referee.isStalemate(board, EColor.White)).toBe(false);
 
         whiteKing.move(board, new Position(0, 7));
-        expect(referee.isStaleMate(board, EColor.White)).toBe(false);
+        expect(referee.isStalemate(board, EColor.White)).toBe(false);
 
         blackPawn.move(board, new Position(0, 6));
 
-        expect(referee.isStaleMate(board, EColor.White)).toBe(true);
+        expect(referee.isStalemate(board, EColor.White)).toBe(true);
     });
 
     test("3", () => {
@@ -73,6 +73,6 @@ describe("stalemate test", () => {
         assert(blackKing.move(board, whiteRook.position));
         expect(referee.isCheck(board, EColor.Black)).toBe(false);
 
-        expect(referee.isStaleMate(board, EColor.White)).toBe(true);
+        expect(referee.isStalemate(board, EColor.White)).toBe(true);
     });
 });
