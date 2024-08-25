@@ -98,7 +98,7 @@ export default class Board {
         throw "Unreachable code";
     }
 
-    test_print(): void {
+    _test_print(): void {
         const s: string[] = [];
 
         for (let y = 0; y < this._grid.length; y++) {
@@ -112,5 +112,13 @@ export default class Board {
         }
 
         console.log(s.join(""));
+    }
+
+    _test_clear(): void {
+        for (let y = 0; y < this._grid.length; y++) {
+            for (let x = 0; x < this.grid[y].length; ++x) {
+                this._grid[y][x] = null;
+            }
+        }
     }
 }

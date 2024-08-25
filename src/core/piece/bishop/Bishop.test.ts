@@ -39,12 +39,12 @@ test("대각선으로만 공격가능", () =>
 
     expect(blackLeftBishop.move(board, new Position(7, 5))).toBe(true);
     expect(board.getPieceAt(new Position(2, 0))).toBeNull();
-    board.test_print();
+    board._test_print();
 
     expect(blackLeftBishop.move(board, new Position(6, 6))).toBe(true);
     expect(board.getPieceAt(new Position(7, 5))).toBe(null);
     expect(board.getPieceAt(new Position(6, 6))).instanceof(Bishop);
     expect(board.getPieceAt(new Position(6, 6))!.color).toBe(EColor.Black);
 
-    board.test_print();
+    board._test_print();
 });

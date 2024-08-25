@@ -23,7 +23,7 @@ test("Pawn은 처음만 2칸 전진 가능", () =>
     expect(piece.move(board, nextPosition)).toBe(true);
     expect(piece.position.equals(nextPosition)).toBe(true);
 
-    board.test_print();
+    board._test_print();
 });
 
 test("Pawn은 대각선만 공격 가능", () =>
@@ -50,7 +50,7 @@ test("Pawn은 대각선만 공격 가능", () =>
     expect(blackPawn2.color).toBe(EColor.Black);
     expect(blackPawn2.move(board, new Position(1, 3))).toBe(true);
 
-    board.test_print();
+    board._test_print();
 
     const whiteMovablePositions = whitePawn.getMovableAndAttackableAndSafePositions(board);
     expect(whiteMovablePositions.length).toBe(1);
@@ -59,5 +59,5 @@ test("Pawn은 대각선만 공격 가능", () =>
     expect(board.getPieceAt(new Position(0, 3))?.color).toBe(EColor.White);
     expect(board.getPieceAt(new Position(1, 4))).toBeNull();
 
-    board.test_print();
+    board._test_print();
 });

@@ -63,15 +63,29 @@ export default class GameManager {
 
         // update status
         const opponent = this.currentPlayer == EColor.White ? EColor.Black : EColor.White;
-        this._status = Referee.instance.calcGameStatus(this._board, opponent);
+        this._status = this.calcGameStatus(this._board, opponent);
 
         // clear
-        ++this._moveCount;
         this._selectedPiece = null;
         this._selectedPosition = null;
+        ++this._moveCount;
 
         // pub/sub
         this.notifyChange();
+    }
+
+    private calcGameStatus(board: Board, color: EColor): EGameStatus {
+        const referee = Referee.instance;
+        const isCheck = referee.isCheck(board, color);
+        if (isCheck) {
+            if (referee.isCheckMate(board, color)) {
+                return EGameStatus.Checkmate;
+            }
+
+            return EGameStatus.Check;
+        }
+
+        return EGameStatus.None;
     }
 
     subscribe(observer: Observer): void {

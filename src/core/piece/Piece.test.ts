@@ -71,7 +71,7 @@ test("체스말이 이동 가능한 위치 확인 테스트", () => {
         expect(board.getPieceAt(new Position(1, 4))).toEqual(blackRightBishop);
     }
 
-    board.test_print();
+    board._test_print();
     // 5
     {
         const whiteKing = board.getKing(EColor.White);
