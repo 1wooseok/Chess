@@ -1,6 +1,8 @@
 import Board from "../board/Board";
 import EColor from "../enum/EColor";
 import Position from "./Position";
+import EClassification from "../enum/EClassification";
+import {Pawn} from "../piece/internal";
 
 export default class Referee {
     private constructor() {
@@ -102,5 +104,23 @@ export default class Referee {
 
     isStalemate(board: Board, color: EColor): boolean {
         return !this.isCheck(board, color) && this.getAllMovableAndAttackableAndSafePositions(board, color).length == 0;
+    }
+
+    // FIXME: 이렇게 간단하게 해도 되는건지
+    isLackOfPiece(board: Board): boolean {
+        for (let y = 0; y < Board.SIZE; ++y) {
+            for (let x = 0; x < Board.SIZE; ++x) {
+                const piece = board.getPieceAt(new Position(x, y));
+
+                if (piece != null) {
+                    // 팀에 상관없이 `주기물` or `pawn`이 살아있는 경우는 기물 부족에 의한 무승부 x
+                    if (piece.classification == EClassification.Major || piece instanceof Pawn) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }
