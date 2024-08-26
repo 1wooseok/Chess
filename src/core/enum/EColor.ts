@@ -1,6 +1,6 @@
 enum EColor {
-  Black,
   White,
+  Black,
 }
 
 

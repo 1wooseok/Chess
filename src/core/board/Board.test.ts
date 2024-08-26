@@ -1,6 +1,6 @@
 import {expect, test} from 'vitest';
 import Board from "./Board";
-import Position from "../chess/Position";
+import Position from "../piece/Position";
 import EColor from "../enum/EColor";
 import {Pawn, Rook} from "../piece/internal";
 

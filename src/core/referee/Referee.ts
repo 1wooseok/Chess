@@ -1,8 +1,8 @@
 import Board from "../board/Board";
 import EColor from "../enum/EColor";
-import Position from "./Position";
+import Position from "../piece/Position";
 import EClassification from "../enum/EClassification";
-import {Pawn} from "../piece/internal";
+import {Pawn, Piece} from "../piece/internal";
 
 // Singleton
 export default class Referee {
@@ -120,5 +120,11 @@ export default class Referee {
         }
 
         return true;
+    }
+
+    canPromotion(piece: Piece): boolean {
+        const endLine = piece.color == EColor.White ? 0 : Board.SIZE - 1;
+
+        return piece instanceof Pawn && piece.position.y == endLine;
     }
 }

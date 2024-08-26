@@ -1,5 +1,5 @@
 import {assert, expect, test} from "vitest";
-import Position from "../chess/Position";
+import Position from "./Position";
 import Board from "../board/Board";
 import {Bishop, King} from "../piece/internal";
 import EColor from "../enum/EColor";

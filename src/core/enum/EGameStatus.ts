@@ -3,7 +3,8 @@ enum EGameStatus {
   Check,
   Checkmate,
   Draw,
-  Resigns
+  Resigns,
+  Promotion,
 }
 
 

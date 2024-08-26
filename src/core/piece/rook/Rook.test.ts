@@ -1,6 +1,6 @@
 import {assert, expect, test} from "vitest";
 import Board from "../../board/Board";
-import Position from "../../chess/Position";
+import Position from "../Position";
 import {Piece, Rook} from "../internal";
 
 test("Rook 이동 test", () => {

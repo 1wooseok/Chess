@@ -1,7 +1,7 @@
 import Board from "../board/Board";
-import Position from "../chess/Position";
+import Position from "./Position";
 import EColor from "../enum/EColor";
-import Referee from "../chess/Referee";
+import Referee from "../referee/Referee";
 import EClassification from "../enum/EClassification";
 
 export abstract class Piece {
@@ -51,9 +51,7 @@ export abstract class Piece {
         return this.getMovablePositions(board);
     }
 
-    // 단순히 기물별로 움직일 수 있는 위치 계산하는게 아니라
-    // 움직였을때 위험한 상황에 놓이는지까지 판단하고 있음.
-    // 함수가 여러가지 일을 하고있어서 좀 애매함
+    // TODO: refactor
     getMovableAndAttackableAndSafePositions(board: Board): Position[] {
         const result: Position[] = []; // TODO: 중복제거 필요할까?
         const referee = Referee.instance;

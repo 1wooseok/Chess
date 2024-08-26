@@ -7,6 +7,21 @@
     <h2>Status: {{ ref_gameStatus == EGameStatus.None ? "-" : EGameStatus[ref_gameStatus] }}</h2>
   </div>
 
+  <div>
+    <button @click="handleRegame">again</button>
+  </div>
+
+  <div v-if="ref_gameStatus == EGameStatus.Promotion" class="promotion_popup">
+    <div v-for="optionItem in Object.keys(EPromotionOptions)" :key="optionItem">
+      <div
+          class="promotion_option"
+          @click="handlePromotion(EPromotionOptions[optionItem])"
+      >
+        {{ optionItem }}
+      </div>
+    </div>
+  </div>
+
   <div class="board">
     <div v-for="(row, y) in ref_grid" :key="y" class="row">
       <div
@@ -21,7 +36,7 @@
           @dragstart="handleDragStart(x, y)"
           @dragover="handleDragOver"
           @drop="handleDrop(x, y)"
-          :draggable="piece?.color == ref_currentPlayersColor"
+          :draggable="piece?.color == ref_currentPlayersColor && (ref_gameStatus == EGameStatus.None || ref_gameStatus == EGameStatus.Check)"
       >
         <div
             :class="{
@@ -40,10 +55,11 @@
 import {onMounted, onUnmounted, ref} from 'vue';
 import GameManager from "../../core/chess/GameManager";
 import {Grid} from "../../core/board/Board.type";
-import Position from "../../core/chess/Position";
+import Position from "../../core/piece/Position";
 import {Piece} from "../../core/piece/internal";
 import EColor from "../../core/enum/EColor";
 import EGameStatus from "../../core/enum/EGameStatus";
+import EPromotionOptions from "../../core/enum/EPromotionOptions";
 
 const gameManager = GameManager.instance;
 const board = gameManager.board;
@@ -54,61 +70,66 @@ const ref_selectedPiece = ref<Piece | null>(null);
 const ref_movablePositions = ref<Position[]>([]);
 const ref_currentPlayersColor = ref<EColor>(gameManager.currentPlayer);
 const ref_gameStatus = ref<EGameStatus>(gameManager.status);
-
 //
+
 onMounted(() => {
   GameManager.instance.subscribe((newGrid: Grid, nextPlayer: EColor, nextGameStatus: EGameStatus) => {
     ref_grid.value = newGrid;
     ref_currentPlayersColor.value = nextPlayer;
     ref_gameStatus.value = nextGameStatus;
+
+    // FIXME: HACK
+    ref_movablePositions.value = [];
+    if (nextGameStatus != EGameStatus.Promotion) {
+      ref_selectedPiece.value = null;
+    }
   });
 });
 onUnmounted(() => {
 
 })
 
-// setter
-function setSelectedPiece(piece: Piece | null): void {
-  gameManager.selectedPiece = piece;
-  ref_selectedPiece.value = piece;
-
-}
-function setMovablePositions(ref_selectedPiece: Piece | null): void {
-  if (ref_selectedPiece == null) {
-    ref_movablePositions.value = [];
+// event handler
+function handleDragStart(x: number, y: number): void {
+  if (ref_gameStatus.value == EGameStatus.Promotion) {
     return;
   }
 
-  ref_movablePositions.value = ref_selectedPiece.getMovableAndAttackableAndSafePositions(board);
-}
-function clear(): void {
-  ref_selectedPiece.value = null;
-  ref_movablePositions.value = [];
-}
-
-// event handler
-function handleDragStart(x: number, y: number): void {
   const piece = board.getPieceAt(new Position(x, y));
 
   if (piece == null || ref_currentPlayersColor.value != piece.color) {
-    setSelectedPiece(null);
+    ref_selectedPiece.value = null;
     return;
   }
 
-  // debugger;
-  setSelectedPiece(piece);
-  setMovablePositions(piece);
+  console.log({p0: piece.position});
+  ref_selectedPiece.value = piece;
+  ref_movablePositions.value = piece.getMovableAndAttackableAndSafePositions(board);
 }
 function handleDragOver(e: Event): void {
   e.preventDefault();
 }
 function handleDrop(x: number, y: number): void {
-  if (isMoveablePosition(x, y)) {
-    gameManager.selectedPosition =  new Position(x, y);
-    gameManager.update();
+  if (!isMoveablePosition(x, y)) {
+    return;
   }
 
-  clear();
+  const piece = ref_selectedPiece.value as Piece;
+  const destination = new Position(x, y);
+  console.log({p1: piece.position});
+  gameManager.onMove(piece, destination);
+}
+
+function handlePromotion(promotionOption: EPromotionOptions): void {
+  const piece = ref_selectedPiece.value as Piece;
+
+  // FIXME: `ref_selected.position`이 왜 바뀌는지 모르겠음.
+  console.log({p2: piece.position});
+  gameManager.promotion(piece, promotionOption);
+}
+
+function handleRegame() {
+
 }
 
 // helper
@@ -165,5 +186,22 @@ function isMoveablePosition(x: number, y: number): boolean {
 
 .able:hover {
   cursor: grab;
+}
+
+.promotion_popup {
+  display: flex;
+  gap: 16px;
+}
+
+.promotion_option {
+  width: 80px;
+  height: 80px;
+
+  background: black;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

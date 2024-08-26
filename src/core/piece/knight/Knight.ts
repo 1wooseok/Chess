@@ -1,5 +1,5 @@
 import Board from "../../board/Board";
-import Position from "../../chess/Position";
+import Position from "../Position";
 import EColor from "../../enum/EColor";
 import {Piece} from "../internal";
 import EClassification from "../../enum/EClassification";
