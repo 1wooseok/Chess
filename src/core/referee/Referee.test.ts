@@ -80,7 +80,7 @@ describe("기물이 불충분한 경우 무승부 판정", () => {
 });
 
 describe("특수기술 발동 가능한지 확인", () => {
-    test("앙파상 테스트", () => {
+    test("White 앙파상 테스트", () => {
         const referee = Referee.instance;
         const gameManager = GameManager.instance;
         const board = gameManager.board;
@@ -118,5 +118,48 @@ describe("특수기술 발동 가능한지 확인", () => {
         board._test_print();
 
         expect(referee.canEnPassant(board, myWhitePawn)).toBe(false);
+    });
+
+    test("Black 앙파상 테스트", () => {
+        const referee = Referee.instance;
+        const gameManager = GameManager.instance;
+        const board = gameManager.board;
+
+        // 앙파상 가능한 경우
+
+        const whitePawn1 = board.getPieceAt(new Position(5, 6));
+        assert(whitePawn1 instanceof Pawn);
+        gameManager.onMove(whitePawn1, new Position(5, 4));
+
+        const myBlackPawn = board.getPieceAt(new Position(6, 1));
+        assert(myBlackPawn instanceof Pawn);
+        gameManager.onMove(myBlackPawn, new Position(6, 3));
+        expect(referee.canEnPassant(board, myBlackPawn)).toBe(false);
+
+        gameManager.onMove(whitePawn1, new Position(5, 3));
+        expect(referee.canEnPassant(board, myBlackPawn)).toBe(false);
+
+        gameManager.onMove(myBlackPawn, new Position(6, 4));
+        expect(referee.canEnPassant(board, myBlackPawn)).toBe(false);
+
+        const whitePawn2 = board.getPieceAt(new Position(7, 6));
+        assert(whitePawn2 instanceof Pawn);
+        gameManager.onMove(whitePawn2, new Position(7, 4));
+        board._test_print();
+
+        expect(referee.canEnPassant(board, myBlackPawn)).toBe(true);
+
+        // 앙파상 가능했지만, 바로 안쓰고 몇턴 지나서 기회가 사라진 경우
+        const blackKnight = board.getPieceAt(new Position(1, 0));
+        assert(blackKnight instanceof Knight);
+        gameManager.onMove(blackKnight, new Position(0, 2));
+
+        const whiteKnight = board.getPieceAt(new Position(1, 7));
+        assert(whiteKnight instanceof Knight);
+        gameManager.onMove(whiteKnight, new Position(0, 5));
+
+        board._test_print();
+
+        expect(referee.canEnPassant(board, myBlackPawn)).toBe(false);
     });
 });

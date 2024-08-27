@@ -139,7 +139,7 @@ export default class Referee {
         }
 
         const currY = piece.position.y;
-        const yy = piece.color == EColor.White ? 3 : Board.SIZE - 3;
+        const yy = piece.color == EColor.White ? 3 : 4;
         if (currY != yy) {
             return false;
         }

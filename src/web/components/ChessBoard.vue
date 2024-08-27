@@ -7,7 +7,8 @@
     <h2>Status: {{ ref_gameStatus == EGameStatus.None ? "-" : EGameStatus[ref_gameStatus] }}</h2>
   </div>
 
-  <div>
+  <div
+      v-if="ref_gameStatus == EGameStatus.Draw || ref_gameStatus == EGameStatus.Checkmate || ref_gameStatus == EGameStatus.Resigns">
     <button @click="handleReplay">Replay</button>
   </div>
 
@@ -19,6 +20,13 @@
       >
         {{ optionItem }}
       </div>
+    </div>
+  </div>
+
+
+  <div class="dead-piece-list">
+    <div v-for="whiteDeadPiece in ref_deadPieces.filter(p => p.color == EColor.White)" class="dead-piece">
+      {{ whiteDeadPiece.symbol }}
     </div>
   </div>
 
@@ -49,6 +57,12 @@
       </div>
     </div>
   </div>
+
+  <div class="dead-pieces">
+    <div v-for="blackDeadPiece in ref_deadPieces.filter(p => p.color == EColor.Black)" class="dead-piece">
+      {{ blackDeadPiece.symbol }}
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -70,13 +84,15 @@ const ref_selectedPiece = ref<Piece | null>(null);
 const ref_movablePositions = ref<Position[]>([]);
 const ref_currentPlayersColor = ref<EColor>(gameManager.currentPlayer);
 const ref_gameStatus = ref<EGameStatus>(gameManager.status);
+const ref_deadPieces = ref<Piece[]>(gameManager.deadPieces);
 //
 
 onMounted(() => {
-  GameManager.instance.subscribe((newGrid: Grid, nextPlayer: EColor, nextGameStatus: EGameStatus) => {
+  GameManager.instance.subscribe((newGrid: Grid, nextPlayer: EColor, nextGameStatus: EGameStatus, nextDeadPieces: Piece[]) => {
     ref_grid.value = newGrid;
     ref_currentPlayersColor.value = nextPlayer;
     ref_gameStatus.value = nextGameStatus;
+    ref_deadPieces.value = nextDeadPieces;
 
     // FIXME: HACK
     ref_movablePositions.value = [];
@@ -129,7 +145,7 @@ function handlePromotion(promotionOption: EPromotionOptions): void {
 }
 
 function handleReplay() {
-
+  gameManager.replay();
 }
 
 // helper
@@ -203,5 +219,14 @@ function isMoveablePosition(x: number, y: number): boolean {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.dead-piece-list {
+  height: 40px;
+  display: flex;
+}
+
+.dead-piece {
+  font-size: 32px;
 }
 </style>

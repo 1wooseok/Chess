@@ -8,7 +8,7 @@ import Referee from "../referee/Referee";
 import EPromotionOptions from "../enum/EPromotionOptions";
 
 // TODO:
-export type Observer = (grid: Grid, color: EColor, gameStatus: EGameStatus) => void;
+export type Observer = (grid: Grid, color: EColor, gameStatus: EGameStatus, deadPieces: Piece[]) => void;
 
 export default class GameManager {
     private static _instance: GameManager | null = null;
@@ -140,7 +140,11 @@ export default class GameManager {
 
     private notifyChange(): void {
         for (const observer of this.observers) {
-            observer(this.board.grid, this.currentPlayer, this._status);
+            observer(this.board.grid, this.currentPlayer, this._status, this._deadPieces);
         }
+    }
+
+    replay() {
+
     }
 }
