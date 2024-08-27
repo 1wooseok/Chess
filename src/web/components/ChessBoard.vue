@@ -8,7 +8,7 @@
   </div>
 
   <div>
-    <button @click="handleRegame">again</button>
+    <button @click="handleReplay">Replay</button>
   </div>
 
   <div v-if="ref_gameStatus == EGameStatus.Promotion" class="promotion_popup">
@@ -128,7 +128,7 @@ function handlePromotion(promotionOption: EPromotionOptions): void {
   gameManager.promotion(piece, promotionOption);
 }
 
-function handleRegame() {
+function handleReplay() {
 
 }
 

@@ -2,7 +2,7 @@ import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
 import Board from "../board/Board";
 import {Grid} from "../board/Board.type";
-import {Bishop, Knight, Piece, Queen, Rook} from "../piece/internal";
+import {Bishop, Knight, Pawn, Piece, Queen, Rook} from "../piece/internal";
 import Position from "../piece/Position";
 import Referee from "../referee/Referee";
 import EPromotionOptions from "../enum/EPromotionOptions";
@@ -10,7 +10,6 @@ import EPromotionOptions from "../enum/EPromotionOptions";
 // TODO:
 export type Observer = (grid: Grid, color: EColor, gameStatus: EGameStatus) => void;
 
-// Singleton
 export default class GameManager {
     private static _instance: GameManager | null = null;
     private constructor() {
@@ -27,22 +26,22 @@ export default class GameManager {
     private readonly observers: Observer[] = [];
     private readonly _deadPieces: Piece[] = [];
     private _status: EGameStatus = EGameStatus.None;
-    private _moveCount: number = 1;
+    private _turnCount: number = 1;
 
     get board(): Board {
         return this._board;
     }
 
     get currentPlayer(): EColor {
-        return (this._moveCount & 1) == 1 ? EColor.White : EColor.Black;
+        return (this._turnCount & 1) == 1 ? EColor.White : EColor.Black;
     }
 
     get status(): EGameStatus {
         return this._status;
     }
 
-    get moveCount(): number {
-        return this._moveCount;
+    get turnCount(): number {
+        return this._turnCount;
     }
 
     get deadPieces(): Piece[] {
@@ -50,16 +49,24 @@ export default class GameManager {
     }
 
     onMove(piece: Piece, destination: Position): void {
-        const deadPiece = this._board.getPieceAt(destination);
-        if (deadPiece != null) {
-            console.assert(deadPiece.color != piece.color);
-            this._deadPieces.push(deadPiece);
+        console.assert(this._board.isValidPosition(destination), {destination});
+
+        const willDiePiece = this._board.getPieceAt(destination);
+        if (willDiePiece != null) {
+            console.assert(willDiePiece.color != piece.color);
+            this._deadPieces.push(willDiePiece);
+        }
+
+        // special skill (en passant)
+        if (Referee.instance.canEnPassant(this._board, piece)) {
+            const killedByEnPassant = (piece as Pawn).enPassant(this._board);
+            this._deadPieces.push(killedByEnPassant!);
         }
 
         // move
         piece.move(this._board, destination);
 
-        // special skill
+        // special skill (promotion)
         if (Referee.instance.canPromotion(piece)) {
             // TODO: HACK ( `promotion`만 따로 if 처리하는게 좀 거슬림 )
             this._status = EGameStatus.Promotion;
@@ -71,6 +78,7 @@ export default class GameManager {
         this.update();
     }
 
+    // TODO: `Pawn class`에 있는게 더 낫지 않을까
     promotion(targetPiece: Piece, promotionOption: EPromotionOptions): void {
         console.assert(Referee.instance.canPromotion(targetPiece));
 
@@ -104,7 +112,7 @@ export default class GameManager {
         this._status = this.calcGameStatus(this._board, opponent);
 
         // cleanup
-        ++this._moveCount;
+        ++this._turnCount;
 
         // ui update
         this.notifyChange();

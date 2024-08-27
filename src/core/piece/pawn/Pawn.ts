@@ -3,14 +3,21 @@ import Position from "../Position";
 import EColor from "../../enum/EColor";
 import {Piece} from "../internal";
 import EClassification from "../../enum/EClassification";
+import GameManager from "../../chess/GameManager";
+import Referee from "../../referee/Referee";
 
 
 export class Pawn extends Piece {
-    private _isFirstMove: boolean;
+    private _isFirstMove: boolean = true;
 
     constructor(position: Position, color: EColor) {
         super(position, color, color == EColor.White ? "♙" : "♟", EClassification.None);
-        this._isFirstMove = true;
+    }
+
+    private _firstDoubleMoveTurn: number = -1;
+
+    get firstDoubleMoveTurn(): number {
+        return this._firstDoubleMoveTurn;
     }
 
     override getMovablePositions(board: Board): Position[] {
@@ -54,12 +61,28 @@ export class Pawn extends Piece {
             }
         }
 
+        if (Referee.instance.canEnPassant(board, this)) {
+            const enPassantTarget = this.getEnPassantTargetOrNull(board)!;
+            console.assert(enPassantTarget != null); // FIXME: HACK
+
+            const dy = super.color == EColor.White ? -1 : 1;
+            const position = new Position(enPassantTarget.position.x, enPassantTarget.position.y + dy);
+
+            result.push(position);
+        }
+
         return result;
     }
 
     override move(board: Board, nextPosition: Position): boolean {
+        const isDoubleMove = Math.abs(super.position.y - nextPosition.y) == 2;
         const success = super.move(board, nextPosition);
+
         if (success) {
+            if (this._isFirstMove && isDoubleMove) {
+                this._firstDoubleMoveTurn = GameManager.instance.turnCount;
+            }
+
             this._isFirstMove = false;
         }
 
@@ -68,5 +91,41 @@ export class Pawn extends Piece {
 
     override simulateMove(board: Board, nextPosition: Position): boolean {
         return super.move(board, nextPosition);
+    }
+
+    enPassant(board: Board): Piece {
+        // FIXME: 예외 처리
+        console.assert(Referee.instance.canEnPassant(board, this));
+
+        const enPassantTarget = this.getEnPassantTargetOrNull(board);
+        if (enPassantTarget == null) {
+            throw "enPassantTarget is null";
+        }
+        console.assert(enPassantTarget.color != super.color);
+
+        board.setPieceAt(enPassantTarget.position, null);
+
+        return enPassantTarget;
+    }
+
+    // FIXME: 함수가 좀 이상함.
+    // FIXME: 중복코드
+    private getEnPassantTargetOrNull(board: Board): Piece | null {
+        const leftRight = [
+            new Position(this.position.x - 1, this.position.y),
+            new Position(this.position.x + 1, this.position.y),
+        ].filter(p => board.isValidPosition(p))
+            .map(p => board.getPieceAt(p))
+            .filter(p => p instanceof Pawn
+                && p.color != this.color
+                && p.firstDoubleMoveTurn == (GameManager.instance.turnCount - 1));
+
+        if (leftRight.length == 0) {
+            return null;
+        }
+
+        console.assert(leftRight.length == 1);
+
+        return leftRight[0]!; // FIXME: 반환값도 코드를 이렇게 짜는게 말이 안됨.
     }
 }

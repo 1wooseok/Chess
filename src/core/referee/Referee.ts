@@ -3,6 +3,7 @@ import EColor from "../enum/EColor";
 import Position from "../piece/Position";
 import EClassification from "../enum/EClassification";
 import {Pawn, Piece} from "../piece/internal";
+import GameManager from "../chess/GameManager";
 
 // Singleton
 export default class Referee {
@@ -122,9 +123,36 @@ export default class Referee {
         return true;
     }
 
+    // TODO: instanceof는 interface로 대체하고, 검증로직을 Pawn에 위치시키는게 나을지도?
     canPromotion(piece: Piece): boolean {
-        const endLine = piece.color == EColor.White ? 0 : Board.SIZE - 1;
+        if (!(piece instanceof Pawn)) {
+            return false;
+        }
 
-        return piece instanceof Pawn && piece.position.y == endLine;
+        const endLine = piece.color == EColor.White ? 0 : Board.SIZE - 1;
+        return piece.position.y == endLine;
+    }
+
+    canEnPassant(board: Board, piece: Piece): boolean {
+        if (!(piece instanceof Pawn)) {
+            return false;
+        }
+
+        const currY = piece.position.y;
+        const yy = piece.color == EColor.White ? 3 : Board.SIZE - 3;
+        if (currY != yy) {
+            return false;
+        }
+
+        // FIXME: 중복코드
+        const turnCount = GameManager.instance.turnCount;
+        const leftRight = [
+            new Position(piece.position.x - 1, piece.position.y),
+            new Position(piece.position.x + 1, piece.position.y),
+        ].filter(p => board.isValidPosition(p))
+            .map(p => board.getPieceAt(p))
+            .filter(p => p instanceof Pawn && p.color != piece.color && p.firstDoubleMoveTurn == (turnCount - 1));
+
+        return leftRight.length > 0;
     }
 }
