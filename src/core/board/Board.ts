@@ -63,7 +63,7 @@ export default class Board {
 
     getPieceAt(position: Position): Piece | null {
         if (!this.isValidPosition(position)) {
-            throw `Invalid position: ${position}`;
+            throw `get: Invalid position: { x: ${position.x}, y: ${position.y} }`;
         }
 
         return this._grid[position.y][position.x];
@@ -71,7 +71,7 @@ export default class Board {
 
     setPieceAt(position: Position, piece: Piece | null): void {
         if (!this.isValidPosition(position)) {
-            throw `Invalid position: ${position}`;
+            throw `set: Invalid position: { x: ${position.x}, y: ${position.y} }`;
         }
 
         this._grid[position.y][position.x] = piece;
@@ -93,7 +93,7 @@ export default class Board {
             }
         }
 
-        throw "Unreachable code";
+        throw "Cannot find King";
     }
 
     _test_print(): void {

@@ -8,7 +8,7 @@ import Referee from "../../referee/Referee";
 
 
 export class Pawn extends Piece {
-    private _isFirstMove: boolean = true;
+    private _hasMoved: boolean = false;
 
     constructor(position: Position, color: EColor) {
         super(position, color, color == EColor.White ? "♙" : "♟", EClassification.None);
@@ -31,7 +31,7 @@ export class Pawn extends Piece {
             result.push(forward);
 
             const doubleForward = new Position(x, y + (2 * dy));
-            if (this._isFirstMove && board.isValidPosition(doubleForward) && board.getPieceAt(doubleForward) == null) {
+            if (!this._hasMoved && board.isValidPosition(doubleForward) && board.getPieceAt(doubleForward) == null) {
                 result.push(doubleForward);
             }
         }
@@ -79,17 +79,17 @@ export class Pawn extends Piece {
         const success = super.move(board, nextPosition);
 
         if (success) {
-            if (this._isFirstMove && isDoubleMove) {
+            if (!this._hasMoved && isDoubleMove) {
                 this._firstDoubleMoveTurn = GameManager.instance.turnCount;
             }
 
-            this._isFirstMove = false;
+            this._hasMoved = true;
         }
 
         return success;
     }
 
-    override simulateMove(board: Board, nextPosition: Position): boolean {
+    override virtualMove(board: Board, nextPosition: Position): boolean {
         return super.move(board, nextPosition);
     }
 

@@ -58,7 +58,10 @@ export default class GameManager {
         }
 
         // special skill (en passant)
-        if (Referee.instance.canEnPassant(this._board, piece)) {
+        // FIXME: HACK
+        const canEnPassant = Referee.instance.canEnPassant(this._board, piece);
+        const isUsingAnPassant = Referee.instance.isUsingEnPassant(this._board, this.currentPlayer, destination);
+        if (canEnPassant && isUsingAnPassant) {
             const killedByEnPassant = (piece as Pawn).enPassant(this._board);
             this._deadPieces.push(killedByEnPassant!);
         }
@@ -144,7 +147,7 @@ export default class GameManager {
         }
     }
 
-    replay() {
-
+    replay(): void {
+        // TODO:
     }
 }

@@ -2,7 +2,7 @@ import Board from "../board/Board";
 import EColor from "../enum/EColor";
 import Position from "../piece/Position";
 import EClassification from "../enum/EClassification";
-import {Pawn, Piece} from "../piece/internal";
+import {King, Pawn, Piece, Rook} from "../piece/internal";
 import GameManager from "../chess/GameManager";
 
 // Singleton
@@ -47,11 +47,11 @@ export default class Referee {
                             const originalPiece = board.getPieceAt(mv);
                             const returnPosition = piece.position.copy();
 
-                            piece.simulateMove(board, mv);
+                            piece.virtualMove(board, mv);
                             if (king.getMovableAndAttackableAndSafePositions(board).length > 0) {
                                 canEscapeCheck = true;
                             }
-                            piece.simulateMove(board, returnPosition);
+                            piece.virtualMove(board, returnPosition);
                             board.setPieceAt(mv, originalPiece);
 
                             if (canEscapeCheck) {
@@ -154,5 +154,86 @@ export default class Referee {
             .filter(p => p instanceof Pawn && p.color != piece.color && p.firstDoubleMoveTurn == (turnCount - 1));
 
         return leftRight.length > 0;
+    }
+
+    // FIXME:
+    isUsingEnPassant(board: Board, color: EColor, destination: Position): boolean {
+        const dy = color == EColor.White ? 1 : -1;
+        const willDiePosition = new Position(destination.x, destination.y + dy);
+        if (!board.isValidPosition(willDiePosition)) {
+            return false;
+        }
+
+        const target = board.getPieceAt(willDiePosition);
+        return target instanceof Pawn && target.color != color && target.firstDoubleMoveTurn == (GameManager.instance.turnCount - 1);
+    }
+
+    canQueenSideCastling(board: Board, king: King): boolean {
+        if (king.hasMoved) { // || this.isCheck(board, king.color)
+            return false;
+        }
+
+        const currX = king.position.x;
+        const currY = king.position.y;
+        console.assert(currX == 4, {currX});
+        console.assert(currY == (king.color == EColor.White ? 7 : 0), {currY});
+
+        const QUEEN_SIDE = -1;
+        for (let x = currX + QUEEN_SIDE; x > 0; --x) {
+            if (board.getPieceAt(new Position(x, currY)) != null) {
+                return false;
+            }
+        }
+
+        const queenSideRook = board.getPieceAt(new Position(0, currY));
+        if (!(queenSideRook instanceof Rook) || queenSideRook.hasMoved) {
+            return false;
+        }
+
+        let canQueenSideCastling = true;
+        const castlingDestination = new Position(currX + (QUEEN_SIDE * 2), currY);
+        king.virtualMove(board, castlingDestination);
+        if (this.isCheck(board, king.color)) {
+            canQueenSideCastling = false;
+        }
+        king.virtualMove(board, new Position(currX, currY));
+
+        return canQueenSideCastling;
+    }
+
+    canKingSideCastling(board: Board, king: King): boolean {
+        if (king.hasMoved) { // || this.isCheck(board, king.color)
+            return false;
+        }
+
+        const KING_SIDE = 1;
+        const currX = king.position.x;
+        const currY = king.position.y;
+        console.assert(currX == 4, {currX});
+        console.assert(currY == (king.color == EColor.White ? 7 : 0), {currY});
+
+        for (let x = currX + KING_SIDE; x < Board.SIZE - 1; ++x) {
+            if (board.getPieceAt(new Position(x, currY)) != null) {
+                return false;
+            }
+        }
+
+        const kingSideRook = board.getPieceAt(new Position(Board.SIZE - 1, currY));
+        if (!(kingSideRook instanceof Rook) || kingSideRook.hasMoved) {
+            return false;
+        }
+
+        let result = true;
+        const castlingDestination = new Position(currX + (KING_SIDE * 2), currY);
+        debugger;
+        king.virtualMove(board, castlingDestination);
+        // FIXME: isCheck에서 재귀호출되서 터짐.
+        if (this.isCheck(board, king.color)) {
+            result = false;
+        }
+
+        king.virtualMove(board, new Position(currX, currY));
+
+        return result;
     }
 }

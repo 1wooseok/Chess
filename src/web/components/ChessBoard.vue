@@ -80,8 +80,8 @@ const board = gameManager.board;
 
 // ref
 const ref_grid = ref<Grid>(board.grid);
-const ref_selectedPiece = ref<Piece | null>(null);
-const ref_movablePositions = ref<Position[]>([]);
+const ref_currPiece = ref<Piece | null>(null);
+const ref_currMovablePositions = ref<Position[]>([]);
 const ref_currentPlayersColor = ref<EColor>(gameManager.currentPlayer);
 const ref_gameStatus = ref<EGameStatus>(gameManager.status);
 const ref_deadPieces = ref<Piece[]>(gameManager.deadPieces);
@@ -95,10 +95,12 @@ onMounted(() => {
     ref_deadPieces.value = nextDeadPieces;
 
     // FIXME: HACK
-    ref_movablePositions.value = [];
     if (nextGameStatus != EGameStatus.Promotion) {
-      ref_selectedPiece.value = null;
+      ref_currPiece.value = null;
     }
+    ref_currMovablePositions.value = [];
+
+    console.log({ref_currPiece: ref_currPiece.value});
   });
 });
 onUnmounted(() => {
@@ -112,34 +114,34 @@ function handleDragStart(x: number, y: number): void {
   }
 
   const piece = board.getPieceAt(new Position(x, y));
-
   if (piece == null || ref_currentPlayersColor.value != piece.color) {
-    ref_selectedPiece.value = null;
+    ref_currPiece.value = null;
     return;
   }
 
-  console.log({p0: piece.position});
-  ref_selectedPiece.value = piece;
-  ref_movablePositions.value = piece.getMovableAndAttackableAndSafePositions(board);
+  ref_currPiece.value = piece;
+  ref_currMovablePositions.value = piece.getMovableAndAttackableAndSafePositions(board);
 }
 function handleDragOver(e: Event): void {
   e.preventDefault();
 }
 function handleDrop(x: number, y: number): void {
   if (!isMoveablePosition(x, y)) {
+    ref_currPiece.value = null;
+    ref_currMovablePositions.value = [];
     return;
   }
 
-  const piece = ref_selectedPiece.value as Piece;
+  const currPiece = ref_currPiece.value as Piece;
   const destination = new Position(x, y);
-  console.log({p1: piece.position});
-  gameManager.onMove(piece, destination);
+
+  gameManager.onMove(currPiece, destination);
 }
 
 function handlePromotion(promotionOption: EPromotionOptions): void {
-  const piece = ref_selectedPiece.value as Piece;
+  const piece = ref_currPiece.value as Piece;
 
-  // FIXME: `ref_selected.position`이 왜 바뀌는지 모르겠음.
+  // FIXME: `ref_currPiece.position`이 왜 바뀌는지 모르겠음.
   console.log({p2: piece.position});
   gameManager.promotion(piece, promotionOption);
 }
@@ -150,7 +152,7 @@ function handleReplay() {
 
 // helper
 function isMoveablePosition(x: number, y: number): boolean {
-  return ref_movablePositions.value.some((movablePosition) => movablePosition.equals(new Position(x, y)));
+  return ref_currMovablePositions.value.some((movablePosition) => movablePosition.equals(new Position(x, y)));
 }
 </script>
 
