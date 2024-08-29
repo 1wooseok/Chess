@@ -10,50 +10,46 @@ export default class Board {
 
     constructor() {
         this._grid = [
-            [
-                new Rook(new Position(0, 0), EColor.Black),
-                new Knight(new Position(1, 0), EColor.Black),
-                new Bishop(new Position(2, 0), EColor.Black),
-                new Queen(new Position(3, 0), EColor.Black),
-                new King(new Position(4, 0), EColor.Black),
-                new Bishop(new Position(5, 0), EColor.Black),
-                new Knight(new Position(6, 0), EColor.Black),
-                new Rook(new Position(7, 0), EColor.Black)
-            ],
-            [
-                new Pawn(new Position(0, 1), EColor.Black),
-                new Pawn(new Position(1, 1), EColor.Black),
-                new Pawn(new Position(2, 1), EColor.Black),
-                new Pawn(new Position(3, 1), EColor.Black),
-                new Pawn(new Position(4, 1), EColor.Black),
-                new Pawn(new Position(5, 1), EColor.Black),
-                new Pawn(new Position(6, 1), EColor.Black),
-                new Pawn(new Position(7, 1), EColor.Black),
-            ],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [
-                new Pawn(new Position(0, 6), EColor.White),
-                new Pawn(new Position(1, 6), EColor.White),
-                new Pawn(new Position(2, 6), EColor.White),
-                new Pawn(new Position(3, 6), EColor.White),
-                new Pawn(new Position(4, 6), EColor.White),
-                new Pawn(new Position(5, 6), EColor.White),
-                new Pawn(new Position(6, 6), EColor.White),
-                new Pawn(new Position(7, 6), EColor.White),
-            ],
-            [
-                new Rook(new Position(0, 7), EColor.White),
-                new Knight(new Position(1, 7), EColor.White),
-                new Bishop(new Position(2, 7), EColor.White),
-                new Queen(new Position(3, 7), EColor.White),
-                new King(new Position(4, 7), EColor.White),
-                new Bishop(new Position(5, 7), EColor.White),
-                new Knight(new Position(6, 7), EColor.White),
-                new Rook(new Position(7, 7), EColor.White)
-            ],
+            new Rook(new Position(0, 0), EColor.Black),
+            new Knight(new Position(1, 0), EColor.Black),
+            new Bishop(new Position(2, 0), EColor.Black),
+            new Queen(new Position(3, 0), EColor.Black),
+            new King(new Position(4, 0), EColor.Black),
+            new Bishop(new Position(5, 0), EColor.Black),
+            new Knight(new Position(6, 0), EColor.Black),
+            new Rook(new Position(7, 0), EColor.Black),
+
+            new Pawn(new Position(0, 1), EColor.Black),
+            new Pawn(new Position(1, 1), EColor.Black),
+            new Pawn(new Position(2, 1), EColor.Black),
+            new Pawn(new Position(3, 1), EColor.Black),
+            new Pawn(new Position(4, 1), EColor.Black),
+            new Pawn(new Position(5, 1), EColor.Black),
+            new Pawn(new Position(6, 1), EColor.Black),
+            new Pawn(new Position(7, 1), EColor.Black),
+
+            null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null,
+
+            new Pawn(new Position(0, 6), EColor.White),
+            new Pawn(new Position(1, 6), EColor.White),
+            new Pawn(new Position(2, 6), EColor.White),
+            new Pawn(new Position(3, 6), EColor.White),
+            new Pawn(new Position(4, 6), EColor.White),
+            new Pawn(new Position(5, 6), EColor.White),
+            new Pawn(new Position(6, 6), EColor.White),
+            new Pawn(new Position(7, 6), EColor.White),
+
+            new Rook(new Position(0, 7), EColor.White),
+            new Knight(new Position(1, 7), EColor.White),
+            new Bishop(new Position(2, 7), EColor.White),
+            new Queen(new Position(3, 7), EColor.White),
+            new King(new Position(4, 7), EColor.White),
+            new Bishop(new Position(5, 7), EColor.White),
+            new Knight(new Position(6, 7), EColor.White),
+            new Rook(new Position(7, 7), EColor.White),
         ];
     }
 
@@ -66,7 +62,7 @@ export default class Board {
             throw `get: Invalid position: { x: ${position.x}, y: ${position.y} }`;
         }
 
-        return this._grid[position.y][position.x];
+        return this._grid[position.y * Board.SIZE + position.x];
     }
 
     setPieceAt(position: Position, piece: Piece | null): void {
@@ -74,7 +70,7 @@ export default class Board {
             throw `set: Invalid position: { x: ${position.x}, y: ${position.y} }`;
         }
 
-        this._grid[position.y][position.x] = piece;
+        this._grid[position.y * Board.SIZE + position.x] = piece;
     }
 
     isValidPosition(position: Position): boolean {
@@ -100,7 +96,7 @@ export default class Board {
         const s: string[] = [];
 
         for (let y = 0; y < this._grid.length; y++) {
-            for (let x = 0; x < this.grid[y].length; ++x) {
+            for (let x = 0; x < Board.SIZE; ++x) {
                 s.push('|');
 
                 const p = this.getPieceAt(new Position(x, y));
@@ -114,8 +110,8 @@ export default class Board {
 
     _test_clear(): void {
         for (let y = 0; y < this._grid.length; y++) {
-            for (let x = 0; x < this.grid[y].length; ++x) {
-                this._grid[y][x] = null;
+            for (let x = 0; x < Board.SIZE; ++x) {
+                this._grid[y * Board.SIZE + x] = null;
             }
         }
     }

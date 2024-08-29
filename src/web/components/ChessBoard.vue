@@ -31,7 +31,7 @@
   </div>
 
   <div class="board">
-    <div v-for="(row, y) in ref_grid" :key="y" class="row">
+    <div v-for="(row, y) in grid" :key="y" class="row">
       <div
           v-for="(piece, x) in row"
           :key="x"
@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from 'vue';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
 import GameManager from "../../core/chess/GameManager";
 import {Grid} from "../../core/board/Board.type";
 import Position from "../../core/piece/Position";
@@ -74,17 +74,34 @@ import {Piece} from "../../core/piece/internal";
 import EColor from "../../core/enum/EColor";
 import EGameStatus from "../../core/enum/EGameStatus";
 import EPromotionOptions from "../../core/enum/EPromotionOptions";
+import Board from "../../core/board/Board";
 
 const gameManager = GameManager.instance;
 const board = gameManager.board;
 
 // ref
-const ref_grid = ref<Grid>(board.grid);
+const ref_grid = ref<(Piece | null)[]>(board.grid);
 const ref_currPiece = ref<Piece | null>(null);
 const ref_currMovablePositions = ref<Position[]>([]);
 const ref_currentPlayersColor = ref<EColor>(gameManager.currentPlayer);
 const ref_gameStatus = ref<EGameStatus>(gameManager.status);
 const ref_deadPieces = ref<Piece[]>(gameManager.deadPieces);
+
+const grid = computed(() => {
+  const result: (Piece | null)[][] = [];
+
+  for (let y = 0; y < Board.SIZE; ++y) {
+    const row: (Piece | null)[] = [];
+    for (let x = 0; x < Board.SIZE; ++x) {
+      const piece = ref_grid.value[y * Board.SIZE + x] as (Piece | null);
+      row.push(piece);
+    }
+
+    result.push(row);
+  }
+
+  return result;
+})
 //
 
 onMounted(() => {

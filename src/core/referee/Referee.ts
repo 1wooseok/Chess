@@ -225,7 +225,6 @@ export default class Referee {
 
         let result = true;
         const castlingDestination = new Position(currX + (KING_SIDE * 2), currY);
-        debugger;
         king.virtualMove(board, castlingDestination);
         // FIXME: isCheck에서 재귀호출되서 터짐.
         if (this.isCheck(board, king.color)) {
