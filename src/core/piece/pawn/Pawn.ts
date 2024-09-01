@@ -61,7 +61,7 @@ export class Pawn extends Piece {
 
         if (this.canEnPassant(board)) {
             const enPassantTarget = this.getEnPassantTargetOrNull(board)!;
-            console.assert(enPassantTarget != null); // FIXME: HACK
+            console.assert(enPassantTarget != null);
 
             const dy = super.color == EColor.White ? -1 : 1;
             const position = new Position(enPassantTarget.position.x, enPassantTarget.position.y + dy);

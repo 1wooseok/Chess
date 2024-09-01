@@ -7,22 +7,9 @@
     <h2>Status: {{ ref_gameStatus == EGameStatus.None ? "-" : EGameStatus[ref_gameStatus] }}</h2>
   </div>
 
-  <div
-      v-if="ref_gameStatus == EGameStatus.Draw || ref_gameStatus == EGameStatus.Checkmate || ref_gameStatus == EGameStatus.Resigns">
+  <div v-if="!isDraggable()">
     <button @click="handleReplay">Replay</button>
   </div>
-
-  <div v-if="ref_gameStatus == EGameStatus.Promotion" class="promotion_popup">
-    <div v-for="optionItem in Object.keys(EPromotionOptions)" :key="optionItem">
-      <div
-          class="promotion_option"
-          @click="handlePromotion(EPromotionOptions[optionItem])"
-      >
-        {{ optionItem }}
-      </div>
-    </div>
-  </div>
-
 
   <div class="dead-piece-list">
     <div v-for="whiteDeadPiece in ref_deadPieces.filter(p => p.color == EColor.White)" class="dead-piece">
@@ -31,7 +18,25 @@
   </div>
 
   <div class="board">
-    <div v-for="(row, y) in ref_grid" :key="y" class="row">
+    <!--    promotion-->
+    <div v-if="ref_gameStatus == EGameStatus.Promotion" class="promotion-popup">
+      <div v-for="optionItem in Object.keys(EPromotionOptions)" :key="optionItem">
+        <div
+            class="promotion-option"
+            @click="handlePromotion(EPromotionOptions[optionItem])"
+        >
+          {{ optionItem }}
+        </div>
+      </div>
+    </div>
+
+    <!--    grid-->
+    <div
+        v-for="(row, y) in ref_grid"
+        :key="y"
+        class="row"
+        :class="{ 'event-none': !isDraggable() }"
+    >
       <div
           v-for="(piece, x) in row"
           :key="x"
@@ -39,21 +44,16 @@
           :class="{
             'white-square': (y + x) % 2 == 0,
             'black-square': (y + x) % 2 != 0,
-            'highlight': isMoveablePosition(x, y)
+            'highlight': isMoveablePosition(x, y),
+            'cursor-not-allowed': piece != null && ref_currentPlayersColor != piece.color,
+            'cursor-grab': piece != null && ref_currentPlayersColor == piece.color,
           }"
-          @dragstart="handleDragStart(x, y)"
+          :draggable="isDraggable() && (piece?.color == ref_currentPlayersColor)"
           @dragover="handleDragOver"
           @drop="handleDrop(x, y)"
-          :draggable="piece?.color == ref_currentPlayersColor && (ref_gameStatus == EGameStatus.None || ref_gameStatus == EGameStatus.Check)"
+          @dragstart="handleDragStart(x, y)"
       >
-        <div
-            :class="{
-              'disabled': piece != null && ref_currentPlayersColor != piece.color,
-              'able': piece != null && ref_currentPlayersColor == piece.color
-            }"
-        >
-          {{ piece?.symbol }}
-        </div>
+        {{ piece?.symbol }}
       </div>
     </div>
   </div>
@@ -99,8 +99,6 @@ onMounted(() => {
       ref_currPiece.value = null;
     }
     ref_currMovablePositions.value = [];
-
-    console.log({ref_currPiece: ref_currPiece.value});
   });
 });
 onUnmounted(() => {
@@ -109,6 +107,10 @@ onUnmounted(() => {
 
 // event handler
 function handleDragStart(x: number, y: number): void {
+  if (!isDraggable()) {
+    return;
+  }
+
   if (ref_gameStatus.value == EGameStatus.Promotion) {
     return;
   }
@@ -124,8 +126,17 @@ function handleDragStart(x: number, y: number): void {
 }
 function handleDragOver(e: Event): void {
   e.preventDefault();
+
+  if (!isDraggable()) {
+    return;
+  }
 }
 function handleDrop(x: number, y: number): void {
+  if (!isDraggable()) {
+    console.log("!isDraggable()");
+    return;
+  }
+
   if (!isMoveablePosition(x, y)) {
     ref_currPiece.value = null;
     ref_currMovablePositions.value = [];
@@ -139,10 +150,13 @@ function handleDrop(x: number, y: number): void {
 }
 
 function handlePromotion(promotionOption: EPromotionOptions): void {
+  if (ref_gameStatus.value != EGameStatus.Promotion) {
+    return;
+  }
+
   const piece = ref_currPiece.value as Piece;
 
   // FIXME: `ref_currPiece.position`이 왜 바뀌는지 모르겠음.
-  console.log({p2: piece.position});
   gameManager.promotion(piece, promotionOption);
 }
 
@@ -154,11 +168,17 @@ function handleReplay() {
 function isMoveablePosition(x: number, y: number): boolean {
   return ref_currMovablePositions.value.some((movablePosition) => movablePosition.equals(new Position(x, y)));
 }
+
+function isDraggable(): boolean {
+  return (ref_gameStatus.value == EGameStatus.None) || (ref_gameStatus.value == EGameStatus.Check);
+}
 </script>
 
 
 <style scoped>
 .board {
+  position: relative;
+
   display: flex;
   flex-wrap: wrap;
 
@@ -168,6 +188,14 @@ function isMoveablePosition(x: number, y: number): boolean {
 
 .row {
   display: flex;
+}
+
+.event-none {
+  pointer-events: none;
+}
+
+.event-none:hover {
+  cursor: not-allowed;
 }
 
 .chess-square {
@@ -198,22 +226,28 @@ function isMoveablePosition(x: number, y: number): boolean {
   border: 1px dashed white;
 }
 
-.disabled:hover {
+.cursor-not-allowed:hover {
   cursor: not-allowed;
 }
 
-.able:hover {
+.cursor-grab:hover {
   cursor: grab;
 }
 
-.promotion_popup {
+.promotion-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translateX(-50%) translateY(-45%);
+
   display: flex;
   gap: 16px;
 }
 
-.promotion_option {
-  width: 80px;
-  height: 80px;
+.promotion-option {
+  width: 160px;
+  height: 160px;
 
   background: black;
   color: white;
@@ -221,6 +255,10 @@ function isMoveablePosition(x: number, y: number): boolean {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.promotion-option:hover {
+  cursor: pointer;
 }
 
 .dead-piece-list {

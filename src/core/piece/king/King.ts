@@ -43,7 +43,8 @@ export class King extends Piece {
 
     override move(board: Board, destination: Position): Piece | null {
         if (this.isUsingCastling(board, destination)) {
-            const side: ESide = destination.x == 1 ? ESide.Queen : ESide.King;
+            // TODO: x == 2 같은 상수 제거하기
+            const side: ESide = destination.x == 2 ? ESide.Queen : ESide.King;
             const rook = board.getPieceAt(new Position(side == ESide.Queen ? 0 : Board.SIZE - 1, super.position.y))!;
             rook.move(board, new Position(side == ESide.Queen ? destination.x + 1 : destination.x - 1, super.position.y));
         }
@@ -66,7 +67,7 @@ export class King extends Piece {
         }
 
         const KING_SIDE_X = Board.SIZE - 2;
-        const QUEEN_SIDE_X = 1;
+        const QUEEN_SIDE_X = 2;
 
         return (destination.x == KING_SIDE_X) || (destination.x == QUEEN_SIDE_X);
     }

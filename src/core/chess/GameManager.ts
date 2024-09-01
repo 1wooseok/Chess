@@ -49,6 +49,12 @@ export default class GameManager {
 
     replay(): void {
         // TODO:
+        this._board.init();
+        this._deadPieces.length = 0;
+        this._status = EGameStatus.None;
+        this._turnCount = 1;
+
+        this.notifyChange();
     }
 
     onMove(piece: Piece, destination: Position): void {
@@ -64,6 +70,7 @@ export default class GameManager {
 
     // TODO: refactor
     promotion(targetPiece: Piece, promotionOption: EPromotionOptions): void {
+        console.assert(targetPiece != null, JSON.stringify({targetPiece}));
         console.assert(this._board.canPromotion(targetPiece.color));
 
         const position = targetPiece.position.copy();
