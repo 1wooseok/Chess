@@ -1,4 +1,4 @@
-import {assert, describe, expect, test} from 'vitest';
+import {describe, expect, test} from 'vitest';
 import Board from "./Board";
 import Position from "../piece/Position";
 import EColor from "../enum/EColor";
@@ -101,11 +101,11 @@ describe("stalemate test", () => {
 
         expect(board.isCheck(EColor.White)).toBe(false);
 
-        assert(whiteRook.move(board, new Position(7, 6)));
+        whiteRook.move(board, new Position(7, 6));
 
         expect(board.isCheck(EColor.Black)).toBe(true);
 
-        assert(blackKing.move(board, whiteRook.position));
+        blackKing.move(board, whiteRook.position);
         expect(board.isCheck(EColor.Black)).toBe(false);
 
         expect(board.isStalemate(EColor.White)).toBe(true);

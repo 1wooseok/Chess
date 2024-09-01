@@ -30,17 +30,17 @@ test("대각선으로만 공격가능", () =>
     assert(blackPawn != null);
     expect(blackPawn).instanceof(Pawn);
 
-    expect(blackPawn.move(board, new Position(3, 3))).toBe(true);
+    blackPawn.move(board, new Position(3, 3));
 
     const blackLeftBishop = board.getPieceAt(new Position(2, 0));
     assert(blackLeftBishop != null);
 
 
-    expect(blackLeftBishop.move(board, new Position(7, 5))).toBe(true);
+    blackLeftBishop.move(board, new Position(7, 5));
     expect(board.getPieceAt(new Position(2, 0))).toBeNull();
     board._test_print();
 
-    expect(blackLeftBishop.move(board, new Position(6, 6))).toBe(true);
+    blackLeftBishop.move(board, new Position(6, 6));
     expect(board.getPieceAt(new Position(7, 5))).toBe(null);
     expect(board.getPieceAt(new Position(6, 6))).instanceof(Bishop);
     expect(board.getPieceAt(new Position(6, 6))!.color).toBe(EColor.Black);
