@@ -58,7 +58,7 @@
     </div>
   </div>
 
-  <div class="dead-pieces">
+  <div class="dead-piece-list">
     <div v-for="blackDeadPiece in ref_deadPieces.filter(p => p.color == EColor.Black)" class="dead-piece">
       {{ blackDeadPiece.symbol }}
     </div>

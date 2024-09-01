@@ -25,17 +25,15 @@ export class Rook extends Piece {
         return Rook.DELTAS.flatMap((d) => super.traverseDirection(board, d.dx, d.dy));
     }
 
-    override move(board: Board, nextPosition: Position): boolean {
-        const success = super.move(board, nextPosition);
+    override move(board: Board, destination: Position): Piece | null {
+        const deadPiece = super.move(board, destination);
 
-        if (success) {
-            this._hasMoved = true;
-        }
+        this._hasMoved = true;
 
-        return success;
+        return deadPiece;
     }
 
-    override virtualMove(board: Board, nextPosition: Position): boolean {
-        return super.move(board, nextPosition);
+    override virtualMove(board: Board, destination: Position): Piece | null {
+        return super.move(board, destination);
     }
 }

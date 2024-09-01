@@ -2,9 +2,8 @@ import EColor from "../enum/EColor";
 import EGameStatus from "../enum/EGameStatus";
 import Board from "../board/Board";
 import {Grid} from "../board/Board.type";
-import {Bishop, Knight, Pawn, Piece, Queen, Rook} from "../piece/internal";
+import {Bishop, Knight, Piece, Queen, Rook} from "../piece/internal";
 import Position from "../piece/Position";
-import Referee from "../referee/Referee";
 import EPromotionOptions from "../enum/EPromotionOptions";
 
 // TODO:
@@ -48,42 +47,24 @@ export default class GameManager {
         return this._deadPieces;
     }
 
+    replay(): void {
+        // TODO:
+    }
+
     onMove(piece: Piece, destination: Position): void {
-        console.assert(this._board.isValidPosition(destination), {destination});
+        console.assert(this._board.isValidPosition(destination), JSON.stringify({destination}));
 
-        const willDiePiece = this._board.getPieceAt(destination);
-        if (willDiePiece != null) {
-            console.assert(willDiePiece.color != piece.color);
-            this._deadPieces.push(willDiePiece);
-        }
-
-        // special skill (en passant)
-        // FIXME: HACK
-        const canEnPassant = Referee.instance.canEnPassant(this._board, piece);
-        const isUsingAnPassant = Referee.instance.isUsingEnPassant(this._board, this.currentPlayer, destination);
-        if (canEnPassant && isUsingAnPassant) {
-            const killedByEnPassant = (piece as Pawn).enPassant(this._board);
-            this._deadPieces.push(killedByEnPassant!);
-        }
-
-        // move
-        piece.move(this._board, destination);
-
-        // special skill (promotion)
-        if (Referee.instance.canPromotion(piece)) {
-            // TODO: HACK ( `promotion`만 따로 if 처리하는게 좀 거슬림 )
-            this._status = EGameStatus.Promotion;
-            this.notifyChange();
-
-            return;
+        const deadPiece = piece.move(this._board, destination);
+        if (deadPiece != null) {
+            this._deadPieces.push(deadPiece);
         }
 
         this.update();
     }
 
-    // TODO: `Pawn class`에 있는게 더 낫지 않을까
+    // TODO: refactor
     promotion(targetPiece: Piece, promotionOption: EPromotionOptions): void {
-        console.assert(Referee.instance.canPromotion(targetPiece));
+        console.assert(this._board.canPromotion(targetPiece.color));
 
         const position = targetPiece.position.copy();
         const color = targetPiece.color;
@@ -110,28 +91,26 @@ export default class GameManager {
     }
 
     private update(): void {
-        // update game status
-        const opponent = this.currentPlayer == EColor.White ? EColor.Black : EColor.White;
-        this._status = this.calcGameStatus(this._board, opponent);
+        if (this._board.canPromotion(this.currentPlayer)) {
+            this._status = EGameStatus.Promotion;
+        } else {
+            const opponent = this.currentPlayer == EColor.White ? EColor.Black : EColor.White;
+            this._status = this.calcGameStatus(this._board, opponent);
+            ++this._turnCount;
+        }
 
-        // cleanup
-        ++this._turnCount;
-
-        // ui update
         this.notifyChange();
     }
 
     private calcGameStatus(board: Board, color: EColor): EGameStatus {
-        const referee = Referee.instance;
-
         // draw
-        if (referee.isStalemate(board, color) || referee.isLackOfPiece(board)) {
+        if (board.isStalemate(color) || this._board.isLackOfPiece()) {
             return EGameStatus.Draw;
         }
 
         // result
-        if (referee.isCheck(board, color)) {
-            return referee.isCheckmate(board, color) ? EGameStatus.Checkmate : EGameStatus.Check;
+        if (board.isCheck(color)) {
+            return board.isCheckmate(color) ? EGameStatus.Checkmate : EGameStatus.Check;
         }
 
         return EGameStatus.None;
@@ -145,9 +124,5 @@ export default class GameManager {
         for (const observer of this.observers) {
             observer(this.board.grid, this.currentPlayer, this._status, this._deadPieces);
         }
-    }
-
-    replay(): void {
-        // TODO:
     }
 }

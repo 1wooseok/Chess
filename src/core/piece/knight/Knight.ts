@@ -5,23 +5,25 @@ import {Piece} from "../internal";
 import EClassification from "../../enum/EClassification";
 
 export class Knight extends Piece {
+    public static readonly DELTAS = [
+        {dx: -1, dy: -2},
+        {dx: -2, dy: -1},
+        {dx: +1, dy: -2},
+        {dx: +2, dy: -1},
+        {dx: -1, dy: +2},
+        {dx: -2, dy: +1},
+        {dx: +1, dy: +2},
+        {dx: +2, dy: +1},
+    ] as const;
+
     constructor(position: Position, color: EColor) {
         super(position, color, color == EColor.White ? "♘" : "♞", EClassification.Minor);
     }
 
     override getMovablePositions(board: Board): Position[] {
-        const curr = super.position;
-
-        const positions = [
-            new Position(curr.x - 1, curr.y - 2),
-            new Position(curr.x - 2, curr.y - 1),
-            new Position(curr.x + 1, curr.y - 2),
-            new Position(curr.x + 2, curr.y - 1),
-            new Position(curr.x - 1, curr.y + 2),
-            new Position(curr.x - 2, curr.y + 1),
-            new Position(curr.x + 1, curr.y + 2),
-            new Position(curr.x + 2, curr.y + 1),
-        ];
+        const x = super.position.x;
+        const y = super.position.y;
+        const positions = Knight.DELTAS.map(({dx, dy}) => new Position(x + dx, y + dy));
 
         return positions.filter(p => board.isValidPosition(p) && board.getPieceAt(p)?.color != super.color);
     }
