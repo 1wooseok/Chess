@@ -10,7 +10,8 @@ export default defineConfig({
       input: {
         // Define your entry point, assuming src/index.ts is your entry file
         // eslint-disable-next-line no-undef
-        index: path.resolve(__dirname, 'src/web/main.ts')
+        index: path.resolve(__dirname, 'src/web/main.ts'),
+        main: 'index.html',
       },
       output: {
         // Custom file name for the index entry file
