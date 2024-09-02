@@ -17,12 +17,12 @@ export default defineConfig({
         // Custom file name for the index entry file
         entryFileNames: (chunkInfo) => {
           if (chunkInfo.name == 'index') {
-            return 'assets/index.js';
+            return 'index.js';
           }
-          return 'assets/[name].[hash].js';
+          return '[name].[hash].js';
         },
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash].[ext]'
+        chunkFileNames: '[name].[hash].js',
+        assetFileNames: '[name].[hash].[ext]'
       }
     }
   }
